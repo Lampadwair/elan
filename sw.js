@@ -1,8 +1,11 @@
 // Élan : cache hors-ligne. Change VERSION à chaque mise à jour.
-const VERSION='elan-v4';
+const VERSION='elan-v6';
 const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(VERSION).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==VERSION).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
+self.addEventListener('push',e=>{ const late=new Date().getHours()>=21;
+  e.waitUntil(self.registration.showNotification(late?'Ta série est en danger':'Ton Tabata t’attend',{body:late?'Quelques minutes avant minuit suffisent pour la garder.':'Quelques minutes aujourd’hui, et ta série continue.',icon:'icon-192.png',badge:'icon-192.png',tag:'elan-rappel'})); });
+self.addEventListener('notificationclick',e=>{ e.notification.close(); e.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(cs=>{ for(const c of cs){ if('focus' in c) return c.focus(); } return clients.openWindow('./'); })); });
 self.addEventListener('fetch',e=>{
   const r=e.request; if(r.method!=='GET') return; const u=new URL(r.url);
   if(u.origin!==location.origin&&!/fonts\.(googleapis|gstatic)\.com$/.test(u.hostname)) return; // la base de données passe toujours par le réseau
