@@ -79,6 +79,7 @@ p{margin:0}
 .lvl{width:50px;height:50px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;color:var(--ink);flex:none}
 .lvl small{font-size:.58rem;font-weight:700;color:var(--muted);line-height:1;letter-spacing:.06em}
 .lvl b{font-size:1.15rem;line-height:1.1}
+.lvl[aria-current="page"]{background:var(--fill);color:var(--on-cta)}
 .sync{font-size:.72rem;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
 .sync i{width:6px;height:6px;border-radius:50%;background:var(--muted)} .sync.ok i{background:var(--good)} .sync.err i{background:var(--danger)}
 
@@ -342,7 +343,8 @@ const ICO={
  pause:'<path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" stroke="none"/>',
  prev:'<path d="M7 6h2v12H7zM20 6v12l-9-6z" fill="currentColor" stroke="none"/>',
  next:'<path d="M15 6h2v12h-2zM4 6v12l9-6z" fill="currentColor" stroke="none"/>',
- x:'<path d="M6 6l12 12M18 6L6 18"/>'};
+ x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ user:'<circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5"/>'};
 const svg=(k,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[k]}</svg>`;
 
 /* ============ COMPTE ET SYNCHRO (webapp iPhone / PC) ============ */
@@ -398,7 +400,7 @@ async function syncSupa(){ if(MODE!=='supa'||SYNC_BUSY) return; SYNC_BUSY=true; 
       const res=await SB.req('/rest/v1/elan_data?on_conflict=user_id&select=updated_at',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=representation'},body:{user_id:x.uid,s:D.s,r:D.r,updated_at:new Date().toISOString()}});
       if(VER===v){ DIRTY=false; LS.set('elan_dirty',''); } if(res&&res[0]) LS.set('elan_pulled',res[0].updated_at); }
     setSync('ok');
-  }catch(e){ failed=true; if(e.code==='no_session'){ MODE='local'; setSync('nosync'); render(); toast('Session expirée : reconnecte-toi dans Progrès.'); } else setSync(e.code==='offline'?'offline':'err'); }
+  }catch(e){ failed=true; if(e.code==='no_session'){ MODE='local'; setSync('nosync'); render(); toast('Session expirée : reconnecte-toi dans Compte.'); } else setSync(e.code==='offline'?'offline':'err'); }
   finally{ SYNC_BUSY=false; if(DIRTY&&!failed&&MODE==='supa'){ clearTimeout(PUSH_T); PUSH_T=setTimeout(syncSupa,1500); } } }
 function startSupa(){ MODE='supa'; PHOTOS=null; setSync('wait'); syncSupa();
   if(!window._elanLoop){ window._elanLoop=1; setInterval(()=>{ if(document.visibilityState==='visible') syncSupa(); },60000);
@@ -576,17 +578,18 @@ function prunePlan(){ const lim=addDays(monday(),-14); for(const k of Object.key
   for(const k of Object.keys(D.r.checked)) if(k.split('|')[0]<lim) delete D.r.checked[k]; D.r.extra=D.r.extra.filter(x=>x.w>=lim); }
 
 /* ============ VUES ============ */
-const VIEWS=[['today','Aujourd’hui','home'],['programme','Programme','prog'],['progres','Progrès','chart'],['repas','Repas','food']];
+const VIEWS=[['today','Aujourd’hui','home'],['programme','Programme','prog'],['progres','Progrès','chart'],['repas','Repas','food'],['compte','Compte','user']];
+let PG_TAB=LS.get('elan_pg')||'apercu';
 let VIEW='today', PROG_TAB=LS.get('elan_pt')||'force', REPAS_TAB=LS.get('elan_rt')||'semaine', PLAN_OFF=0, RFILTER='toutes', RSEARCH='', TESTFORM=false, SEL_USER=null;
 function route(){ const h=location.hash.slice(1); VIEW=VIEWS.some(v=>v[0]===h)?h:'today'; render(); window.scrollTo(0,0); }
 function render(){
-  $('#tabs').innerHTML=VIEWS.map(([id,l,ic])=>`<a href="#${id}" ${VIEW===id?'aria-current="page"':''}>${svg(ic)}${l}</a>`).join('');
-  $('#view').innerHTML=({today:vToday,programme:vProgramme,progres:vProgres,repas:vRepas})[VIEW]();
-  if(VIEW==='progres'&&PHOTOS===null) loadPhotos();
+  $('#tabs').innerHTML=VIEWS.slice(0,4).map(([id,l,ic])=>`<a href="#${id}" ${VIEW===id?'aria-current="page"':''}>${svg(ic)}${l}</a>`).join('');
+  $('#view').innerHTML=({today:vToday,programme:vProgramme,progres:vProgres,repas:vRepas,compte:vCompte})[VIEW]();
+  if(VIEW==='progres'&&PG_TAB==='corps'&&PHOTOS===null) loadPhotos();
 }
-function header(title,sub){ const lv=lvlInfo(totalXp());
+function header(title,sub){
   return `<header class="head"><div style="min-width:0"><div class="label">${sub||longDate()}</div><h1 class="title-xl">${title}</h1></div>
-  <a href="#progres" class="lvl glass" aria-label="Niveau ${lv.L}, voir ta progression"><small>NIV</small><b>${lv.L}</b></a></header>`; }
+  <a href="#compte" class="lvl glass" ${VIEW==='compte'?'aria-current="page"':''} aria-label="Compte et réglages">${svg('user',22)}</a></header>`; }
 function syncLine(){ return `<div style="text-align:center"><span id="sync" class="sync ${SYNC==='ok'?'ok':SYNC==='err'?'err':''}"><i></i>${SYNC_TXT[SYNC]||''}</span></div>`; }
 function testForm(){ return `<section class="card glass" id="testcard"><div><div class="label">Test de niveau · 5 minutes</div><h2 class="title-l" style="margin-top:4px">Où en es-tu ?</h2></div>
   <p class="small sub">Fais chaque exercice une fois, avec 2 minutes de pause entre les deux. C’est ton point de départ, pas une note.</p>
@@ -701,8 +704,8 @@ function vProgres(){
       <text x="${px(w.length-1)-8}" y="${py(w[w.length-1].kg)-10}" font-size="12" font-weight="700" fill="var(--ink)" text-anchor="end">${String(w[w.length-1].kg).replace('.',',')} kg</text></svg>`; }
   const NAMES={A:'Force · haut du corps',B:'Force · jambes',C:'Tabata',T:'Tabata du jour',mini:'Version courte',libre:'Tabata libre'};
   const t0=s.tests[0], tl=s.tests[s.tests.length-1], delta=(a,b)=>{const d=b-a; return d?` <span class="xs" style="color:var(--good)">${d>0?'+':''}${d}</span>`:'';};
-  return header('Progrès',' ')+`
-  <section class="card glass"><div class="between"><div><div class="label">Niveau</div><div style="font-size:3rem;font-weight:300;letter-spacing:-.04em;line-height:1">${lv.L}</div></div><div style="text-align:right"><div class="h-sec">${lv.rank}</div><div class="xs muted">${fr(totalXp())} XP au total</div></div></div>
+  const seg=`<div class="seg glass" role="group" aria-label="Section progrès">${[['apercu','Vue d’ensemble'],['corps','Corps'],['historique','Historique']].map(([id,l])=>`<button aria-pressed="${PG_TAB===id}" data-act="pgtab" data-id="${id}">${l}</button>`).join('')}</div>`;
+  const body={apercu:`  <section class="card glass"><div class="between"><div><div class="label">Niveau</div><div style="font-size:3rem;font-weight:300;letter-spacing:-.04em;line-height:1">${lv.L}</div></div><div style="text-align:right"><div class="h-sec">${lv.rank}</div><div class="xs muted">${fr(totalXp())} XP au total</div></div></div>
     <div class="bar"><i style="width:${Math.round(lv.cur/lv.need*100)}%"></i></div><p class="xs muted">${fr(lv.left)} XP avant le niveau ${lv.L+1}. Chaque minute rapporte 10 XP, plus des bonus pour la série et la force.</p></section>
   <div class="grid2" style="grid-template-columns:repeat(2,minmax(0,1fr))">
     <div class="card glass tight stat"><b>${fr(kc)}</b><span>kcal brûlées au total</span></div>
@@ -714,7 +717,9 @@ function vProgres(){
     <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Calories brûlées sur les 8 dernières semaines">${bars}</svg>
     <p class="xs muted">Estimation selon ton poids et l’intensité des exercices.</p></section>
   <section class="card glass tight"><span class="h-sec">12 dernières semaines</span><div class="heat-wrap"><div class="heat">${cells}</div></div></section>
-  <section class="card glass"><div class="between"><span class="h-sec">Tests</span><button class="btn sm" data-act="openTest">Refaire le test</button></div>
+  <span class="h-sec" style="padding:0 4px">Trophées</span>
+  <div class="trophies">${badges().map((b,i)=>`<div class="trophy glass ${b.g?'got':''}"><span class="m">${b.g?'✓':i+1}</span><strong class="small">${b.n}</strong><span class="xs muted">${b.d}</span></div>`).join('')}</div>
+`,corps:`  <section class="card glass"><div class="between"><span class="h-sec">Tests</span><button class="btn sm" data-act="openTest">Refaire le test</button></div>
     ${t0?`<div class="grid3"><div class="stat"><b>${tl.pu}${delta(t0.pu,tl.pu)}</b><span>pompes</span></div><div class="stat"><b>${tl.sq}${delta(t0.sq,tl.sq)}</b><span>squats / min</span></div><div class="stat"><b>${tl.pl}${delta(t0.pl,tl.pl)}</b><span>s de planche</span></div></div>
       ${s.tests.length>1?`<div class="tbl-wrap"><table class="t"><thead><tr><th>Date</th><th>Pompes</th><th>Squats</th><th>Planche</th></tr></thead><tbody>${s.tests.map(t=>`<tr><td>${fmtDate(t.d)}</td><td>${t.pu}</td><td>${t.sq}</td><td>${t.pl} s</td></tr>`).join('')}</tbody></table></div>`:''}`:'<p class="small muted">Aucun test enregistré.</p>'}</section>
   ${TESTFORM?testForm():''}
@@ -724,23 +729,27 @@ function vProgres(){
   <section class="card glass"><span class="h-sec">Poids</span>${chart}
     <div class="row"><input type="number" id="kg" step="0.1" min="30" max="200" inputmode="decimal" placeholder="${String(curWeight()).replace('.',',')} kg" style="max-width:9rem" aria-label="Poids en kg"><button class="btn" data-act="addWeight">Ajouter</button></div>
     <p class="xs muted">Une pesée par semaine, le matin. Ton poids sert aussi à estimer les calories brûlées.</p></section>
-  <span class="h-sec" style="padding:0 4px">Trophées</span>
-  <div class="trophies">${badges().map((b,i)=>`<div class="trophy glass ${b.g?'got':''}"><span class="m">${b.g?'✓':i+1}</span><strong class="small">${b.n}</strong><span class="xs muted">${b.d}</span></div>`).join('')}</div>
-  <section class="card glass"><div class="between"><span class="h-sec">Historique</span>${ss.length?'<button class="btn sm danger" data-act="undoLast" data-confirm>Supprimer la dernière</button>':''}</div>
+`,historique:`  <section class="card glass"><div class="between"><span class="h-sec">Historique</span>${ss.length?'<button class="btn sm danger" data-act="undoLast" data-confirm>Supprimer la dernière</button>':''}</div>
     ${ss.length?`<ul class="list">${ss.slice(-10).reverse().map(x=>`<li><span class="small">${NAMES[x.k]||x.k}<br><span class="xs muted">${fmtDate(x.d)} · ${x.min} min</span></span><span class="small num" style="text-align:right">${fr(sKcal(x))} kcal<br><span class="xs muted">+${fr(sXp(x))} XP</span></span></li>`).join('')}</ul>`:'<p class="small muted">Ta première séance apparaîtra ici.</p>'}</section>
+`}[PG_TAB];
+  return header('Progrès')+seg+body+syncLine();
+}
+function vCompte(){ const s=D.s;
+  return header('Compte et réglages',' ')+`
+  <section class="card glass"><span class="h-sec">Profil</span>
+    <div class="fields"><label class="f">Prénom<input type="text" id="set_name" maxlength="30" value="${esc(s.name)}"></label><label class="f">Mon pourquoi<input type="text" id="why" maxlength="140" value="${esc(s.why)}" placeholder="Ex. Retrouver de l’énergie"></label></div></section>
   ${accountCard()}
-  <section class="card glass"><span class="h-sec">Réglages</span>
-    <div class="fields"><label class="f">Prénom<input type="text" id="set_name" maxlength="30" value="${esc(s.name)}"></label><label class="f">Mon pourquoi<input type="text" id="why" maxlength="140" value="${esc(s.why)}" placeholder="Ex. Retrouver de l’énergie"></label></div>
+  <section class="card glass"><span class="h-sec">Pendant les séances</span>
     <div class="between" style="align-items:center"><span class="small">Annonces vocales</span><button class="btn sm" data-act="toggleVoice">${s.voice?'Activées':'Désactivées'}</button></div>
-    <div class="between" style="align-items:center"><span class="small">Garder ma musique pendant les séances</span><button class="btn sm" data-act="toggleMusic">${s.keepMusic?'Oui':'Non'}</button></div>
-    <div class="between" style="align-items:center"><span class="small">Tempo : un petit tic chaque seconde d’effort</span><button class="btn sm" data-act="toggleTempo">${s.tempo?'Activé':'Désactivé'}</button></div>
-    <div class="between" style="align-items:center;flex-wrap:wrap"><span class="small">Rappel quotidien dans ton calendrier</span><div class="row" style="flex-wrap:nowrap"><input type="time" id="remind_t" value="${esc(s.remind||'18:30')}" style="width:7.2rem" aria-label="Heure du rappel"><button class="btn sm" data-act="remind">Ajouter</button></div></div>
-    <details><summary class="small" style="cursor:pointer;font-weight:600">Transférer mes données</summary>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px"><p class="xs muted">Pour passer ta progression et tes recettes d’une version de l’appli à l’autre (claude.ai ↔ appli iPhone).</p>
-      <div><button class="btn sm" data-act="copyData">Copier mes données</button></div>
-      <textarea id="xfer" rows="3" placeholder="Colle ici des données copiées depuis l’autre version" aria-label="Données à importer"></textarea>
-      <div><button class="btn sm danger" data-act="pasteData" data-confirm>Remplacer par ces données</button></div></div></details>
-  </section>`+syncLine();
+    <div class="between" style="align-items:center"><span class="small">Garder ma musique</span><button class="btn sm" data-act="toggleMusic">${s.keepMusic?'Oui':'Non'}</button></div>
+    <div class="between" style="align-items:center"><span class="small">Tempo : un tic chaque seconde d’effort</span><button class="btn sm" data-act="toggleTempo">${s.tempo?'Activé':'Désactivé'}</button></div></section>
+  <section class="card glass"><span class="h-sec">Rappel quotidien</span><p class="small sub">Ajoute un rendez-vous quotidien à ton calendrier, avec une alerte à l’heure choisie.</p>
+    <div class="row" style="flex-wrap:nowrap"><input type="time" id="remind_t" value="${esc(s.remind||'18:30')}" style="width:7.5rem" aria-label="Heure du rappel"><button class="btn" data-act="remind">Ajouter au calendrier</button></div></section>
+  <details class="card glass"><summary class="h-sec">Transférer mes données</summary>
+    <p class="xs muted">Pour passer ta progression et tes recettes d’une version de l’appli à l’autre (claude.ai ↔ appli iPhone).</p>
+    <div><button class="btn sm" data-act="copyData">Copier mes données</button></div>
+    <textarea id="xfer" rows="3" placeholder="Colle ici des données copiées depuis l’autre version" aria-label="Données à importer"></textarea>
+    <div><button class="btn sm danger" data-act="pasteData" data-confirm>Remplacer par ces données</button></div></details>`+syncLine();
 }
 function measuresCard(){ const m=D.s.measures||[], f=m[0], l=m[m.length-1];
   return `<section class="card glass"><span class="h-sec">Mensurations</span>
@@ -1005,7 +1014,8 @@ const ACT={
   setDur(b){ MD=+b.dataset.n; LS.set('elan_md',String(MD)); render(); }, setZone(b){ MZ=b.dataset.id; LS.set('elan_mz',MZ); render(); },
   reroll(){ MSEED++; render(); }, startMesure(){ startPlayer(customSession(),{k:'libre'}); },
   exInfo(b){ const e=b.dataset.ex; if(!EX[e]) return; openSheet(exSheet(e)); figStart($('#sheet .fig'),e,STRETCH.has(e)?3200:1600); },
-  goAcct(){ if(VIEW!=='progres'){ location.hash='progres'; } setTimeout(()=>$('#acct')?.scrollIntoView({behavior:'smooth',block:'center'}),150); },
+  pgtab(b){ PG_TAB=b.dataset.id; LS.set('elan_pg',PG_TAB); render(); },
+  goAcct(){ if(VIEW!=='compte'){ location.hash='compte'; } setTimeout(()=>$('#acct')?.scrollIntoView({behavior:'smooth',block:'center'}),150); },
   async login(){ const m=$('#au_msg'), e=$('#au_email').value.trim(), pw=$('#au_pw').value; if(!e||!pw){ m.textContent='Entre ton e-mail et ton mot de passe.'; return; }
     m.textContent='Connexion…'; try{ await SB.login(e,pw); DIRTY=true; VER++; LS.set('elan_dirty','1'); LS.set('elan_pulled',''); startSupa(); render(); toast('Connecté. Synchro en cours…'); }catch(err){ m.textContent=authErr(err); } },
   async signup(){ const m=$('#au_msg'), e=$('#au_email').value.trim(), pw=$('#au_pw').value; if(!e||!pw){ m.textContent='Entre un e-mail et un mot de passe (6 caractères minimum).'; return; }
