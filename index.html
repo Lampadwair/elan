@@ -1,5 +1,7 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-W92IycBLZJpWBDhg1iYqmFN8fBt0nOyW+otK2xwy81M='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -222,6 +224,7 @@ table.t th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:
 .thinking{display:flex;align-items:center;gap:10px;color:var(--muted);font-weight:600}
 .thinking::before{content:"";width:14px;height:14px;border-radius:50%;border:2px solid var(--track);border-top-color:var(--fill);animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-transparency:reduce){ .glass,.sheet,.tabbar{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:var(--glass-strong)!important} }
 @media (prefers-reduced-motion:reduce){ .thinking::before{animation:none} .player .ambient i,.pl-prog i{transition:none} }
 .figwrap{height:min(108px,13vh);display:flex;justify-content:center}
 .fig{height:100%;width:auto;overflow:visible}
@@ -434,8 +437,8 @@ let DIRTY=!!LS.get('elan_dirty'), VER=0, PUSH_T=null, SYNC_BUSY=false;
 function markDirty(){ DIRTY=true; VER++; LS.set('elan_dirty','1'); clearTimeout(PUSH_T); PUSH_T=setTimeout(syncSupa,900); }
 async function syncSupa(){ if(MODE!=='supa'||SYNC_BUSY) return; SYNC_BUSY=true; let failed=false;
   try{ const x=SB.sess(); if(!x) throw {code:'no_session'};
-    const rows=await SB.req('/rest/v1/elan_data?select=s,r,updated_at&user_id=eq.'+x.uid), row=rows&&rows[0];
-    if(row&&row.updated_at!==(LS.get('elan_pulled')||'')){
+    const uid=encodeURIComponent(x.uid), head=await SB.req('/rest/v1/elan_data?select=updated_at&user_id=eq.'+uid); let row=head&&head[0];
+    if(row&&row.updated_at!==(LS.get('elan_pulled')||'')){ const full=await SB.req('/rest/v1/elan_data?select=s,r,updated_at&user_id=eq.'+uid); row=full&&full[0]||row;
       const rem={s:norm('s',row.s),r:norm('r',row.r)};
       if(DIRTY){ const fresh=!D.s.level&&!D.s.sessions.length&&!D.r.recipes.length; const m=fresh?rem:mergeData({s:D.s,r:D.r},rem); D.s=m.s; D.r=m.r; }
       else { D.s=rem.s; D.r=rem.r; }
@@ -486,7 +489,16 @@ const MEAS=[['bras','Bras'],['poitrine','Poitrine'],['taille','Taille'],['cuisse
 const D={s:clone(DEF_S),r:clone(DEF_R)};
 const SY={s:{ref:null,last:'',writing:false,again:false,fresh:false,seen:false},r:{ref:null,last:'',writing:false,again:false,fresh:false,seen:false}};
 let MODE='init', SAMPLE=null, SYNC='wait';
-function norm(k,d){ return Object.assign(clone(k==='s'?DEF_S:DEF_R),clone(d||{})); }
+function scrub(v,dep=0){ if(dep>8) return null; if(typeof v==='string') return v.replace(/[<>]/g,'').slice(0,4000); if(typeof v==='number') return isFinite(v)?v:0; if(typeof v==='boolean'||v==null) return v;
+  if(Array.isArray(v)) return v.slice(0,5000).map(x=>scrub(x,dep+1)); if(typeof v==='object'){ const o={}; for(const k of Object.keys(v)){ if(k==='__proto__'||k==='constructor'||k==='prototype') continue; o[k]=scrub(v[k],dep+1); } return o; } return null; }
+const ISOD=/^\d{4}-\d{2}-\d{2}$/, N0=v=>{ const n=+v; return isFinite(n)?n:0; };
+function norm(k,d){ const o=Object.assign(clone(k==='s'?DEF_S:DEF_R),scrub(d&&typeof d==='object'?d:{}));
+  if(k==='s'){ const arr=a=>Array.isArray(a)?a.filter(x=>x&&typeof x==='object'):[];
+    o.tests=arr(o.tests).filter(t=>ISOD.test(t.d)).map(t=>({d:t.d,pu:N0(t.pu),sq:N0(t.sq),pl:N0(t.pl)}));
+    o.weights=arr(o.weights).filter(w=>ISOD.test(w.d)).map(w=>({...w,kg:N0(w.kg)}));
+    o.measures=arr(o.measures).filter(m=>ISOD.test(m.d)).map(m=>{ const r={d:m.d}; for(const [kk,vv] of Object.entries(m)) if(kk!=='d') r[kk]=vv==null?null:N0(vv); return r; });
+    o.sessions=arr(o.sessions); ['tier','tierPts','level','cycle','cycleStart','best','adj'].forEach(f=>{ if(o[f]!=null) o[f]=N0(o[f]); }); }
+  return o; }
 function setSync(s){ SYNC=s; const el=$('#sync'); if(el){ el.className='sync '+(s==='ok'?'ok':s==='err'?'err':''); el.lastChild.textContent=SYNC_TXT[s]||''; } }
 const SYNC_TXT={ok:'Synchronisé',wait:'Synchronisation…',slow:'Données pas encore accessibles',err:'Synchro en échec, nouvel essai bientôt',local:'Sur cet appareil',nosync:'Sur cet appareil · synchro non activée',offline:'Hors ligne · gardé sur l’appareil'};
 function save(k){ LS.set('elan_'+k,JSON.stringify(D[k])); if(MODE==='db') write(k); else if(MODE==='supa') markDirty(); }
@@ -573,7 +585,7 @@ const SURPRISES=['emom','pyramide','circuit'];
 const TCOL={cardio:'#F04A24',haut:'#2F6BFF',jambes:'#7A4DFF',abdos:'#0F9F73',full:'#E81F70',surprise:'#FFB000',mobilite:'#14B8C9'};
 const TON=id=>id==='surprise'||id==='mobilite'?'#121116':'#FFFFFF';
 const TSHORT={cardio:'Cardio',haut:'Haut',jambes:'Jambes',abdos:'Abdos',full:'Full',surprise:'Surprise',mobilite:'Mobilité'};
-function applyDay(){ const id=THEMES[dow()].id, r=document.documentElement.style; r.setProperty('--day',TCOL[id]); r.setProperty('--on-day',TON(id)); }
+let DAY_ID=''; function applyDay(){ const id=THEMES[dow()].id, r=document.documentElement.style; if(id===DAY_ID) return; DAY_ID=id; r.setProperty('--day',TCOL[id]); r.setProperty('--on-day',TON(id)); }
 const SURPRISE_N={emom:'EMOM',pyramide:'Pyramide',circuit:'Circuit 40/20'};
 const getTier=()=>clamp(D.s.tier??({1:1,2:3,3:5}[D.s.level||1]||1),1,10);
 // chaque palier change une seule chose : plus de blocs, plus d'effort ou des exercices plus durs
@@ -696,7 +708,7 @@ function render(){
   if(VIEW==='progres'&&PG_TAB==='corps'&&PHOTOS===null) loadPhotos();
   fitTitles();
 }
-function fitTitles(){ document.querySelectorAll('.fit').forEach(el=>{ let fs=parseFloat(getComputedStyle(el).fontSize), n=0; while(el.scrollWidth>el.clientWidth+1&&fs>18&&n++<40){ fs-=2; el.style.fontSize=fs+'px'; } }); }
+function fitTitles(){ document.querySelectorAll('.fit').forEach(el=>{ let fs=parseFloat(getComputedStyle(el).fontSize), n=0; if(el.scrollWidth>el.clientWidth+1){ fs=Math.max(18,Math.floor(fs*el.clientWidth/el.scrollWidth)); el.style.fontSize=fs+'px'; } while(el.scrollWidth>el.clientWidth+1&&fs>18&&n++<40){ fs-=2; el.style.fontSize=fs+'px'; } }); }
 try{ document.fonts?.ready.then(()=>{ document.querySelectorAll('.fit').forEach(el=>el.style.fontSize=''); render(); }); }catch(e){}
 function fitSz(t,max,off){ const L=Math.max(4,...String(t).split(/\s+/).map(w=>w.length)); return `font-size:min(${max}rem,calc((min(100vw,600px) - ${off}px) / ${(L*0.5).toFixed(2)}))`; }
 function header(title,sub){
