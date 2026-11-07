@@ -1,6 +1,6 @@
 {
- "name": "Élan",
- "short_name": "Élan",
+ "name": "Hermes",
+ "short_name": "Hermes",
  "description": "Tabata quotidien, programme force au poids du corps et planning repas.",
  "lang": "fr",
  "start_url": "./",
@@ -8,7 +8,7 @@
  "display": "standalone",
  "orientation": "portrait",
  "background_color": "#E9ECF1",
- "theme_color": "#E9ECF1",
+ "theme_color": "#F04A24",
  "icons": [
   {
    "src": "icon-192.png",

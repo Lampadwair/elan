@@ -1,17 +1,17 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-lkyMXq8vALvtMrUcpBral2ANbdCOnaXHU9p+hteYQ0M='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-YLAXk1MqLgKCsZifBg7mzE2nhCRgXfqamswF1ZKhXhg='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Élan">
+<meta name="apple-mobile-web-app-title" content="Hermes">
 <meta name="theme-color" content="#E9ECF1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0B0D12" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
-<title>Programme Élan</title>
+<title>Hermes</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -269,6 +269,7 @@ details.card>summary::-webkit-details-marker{display:none}
 .hero-day .hillu{margin:-6px -8px -34px auto;width:min(66%,300px);pointer-events:none}.hero-day .hillu svg{display:block;width:100%;height:auto}
 .goalpick{display:flex;flex-direction:column;gap:8px}.goalpick button{border:0;font:inherit;text-align:left;color:inherit;border-radius:18px;padding:10px 14px;background:color-mix(in srgb,var(--on-day) 14%,transparent);display:flex;flex-direction:column;gap:2px}.goalpick button span{font-size:.82rem;opacity:.85}.goalpick button[aria-pressed=true]{background:var(--on-day);color:var(--day)}
 .sheet .goalpick button,.sheet-like .goalpick button{background:var(--glass);border:1px solid var(--border)}.sheet .goalpick button[aria-pressed=true],.sheet-like .goalpick button[aria-pressed=true]{background:var(--day);color:var(--on-day);border-color:transparent}
+.tcharts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.tchart{margin:0}.tchart figcaption{display:flex;flex-direction:column}.tchart b{font-size:1.25rem}
 .hero-day .hlink{background:none;border:0;color:inherit;font-weight:600;font-size:.9rem;text-decoration:underline;text-underline-offset:3px;opacity:.95}
 .dnum{font-family:var(--display);font-size:2.1rem;line-height:1;letter-spacing:.01em}
 .wk7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center;font-size:.7rem;font-weight:700;color:var(--muted)}
@@ -367,7 +368,7 @@ const BASE_RECIPES=[
  {id:'b7',name:'Dahl de lentilles corail',portions:3,time:30,kcal:625,tags:['végétarien','batch cooking'],ing:['250 g lentilles corail','200 ml lait de coco','400 g tomates concassées','1 oignon','150 g riz','1 c. à soupe curry'],steps:'Faire revenir l’oignon avec le curry.\nAjouter lentilles, tomates, lait de coco et 400 ml d’eau. Cuire 20 min.\nServir avec le riz.'},
  {id:'b8',name:'Smoothie banane-avoine',portions:1,time:5,kcal:615,tags:['collation','sans cuisson'],ing:['300 ml lait entier','1 banane','40 g flocons d’avoine','1 c. à soupe beurre de cacahuète','100 g fromage blanc'],steps:'Tout mixer 1 minute.\nIdéal après la séance.'},
 ];
-const DEF_S={name:'Simon',quiet:false,theme:'auto',pushOn:false,favSess:[],challenges:{},measures:[],remind:'18:30',keepMusic:true,tempo:false,best:0,level:null,tests:[],sessions:[],weights:[],adj:0,cycleStart:0,cycle:1,why:'',voice:true,seenFmt:[],goal:'mix'};
+const DEF_S={name:'Simon',quiet:false,theme:'auto',pushOn:false,favSess:[],challenges:{},measures:[],remind:'18:30',keepMusic:true,tempo:false,best:0,level:null,tests:[],sessions:[],weights:[],adj:0,cycleStart:0,cycle:1,why:'',voice:true,seenFmt:[],goal:'mix',wkc:{},duoDone:{}};
 const CATS=[['plat','Plats'],['petitdej','Petits-déj'],['collation','Collations'],['dessert','Desserts']];
 const BASE_CAT={b3:'petitdej',b8:'collation'}; BASE_RECIPES.forEach(r=>r.cat=BASE_CAT[r.id]||'plat');
 const recipeCat=r=>r.cat||((r.tags||[]).some(t=>/petit/i.test(t))?'petitdej':(r.tags||[]).some(t=>/collation|snack/i.test(t))?'collation':'plat');
@@ -458,7 +459,7 @@ async function syncSupa(){ if(MODE!=='supa'||SYNC_BUSY) return; SYNC_BUSY=true; 
     setSync('ok');
   }catch(e){ failed=true; if(e.code==='no_session'){ MODE='local'; setSync('nosync'); render(); toast('Session expirée : reconnecte-toi dans Compte.'); } else setSync(e.code==='offline'?'offline':'err'); }
   finally{ SYNC_BUSY=false; if(DIRTY&&!failed&&MODE==='supa'){ clearTimeout(PUSH_T); PUSH_T=setTimeout(syncSupa,1500); } } }
-function startSupa(){ MODE='supa'; PHOTOS=null; setSync('wait'); syncSupa();
+function startSupa(){ MODE='supa'; PHOTOS=null; DUO=null; setSync('wait'); syncSupa().then(()=>{ publishShare(); loadDuo(); });
   if(!window._elanLoop){ window._elanLoop=1; setInterval(()=>{ if(document.visibilityState==='visible') syncSupa(); },60000);
     document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') syncSupa(); }); addEventListener('online',()=>syncSupa()); } }
 function handleAuthHash(){ const h=location.hash; if(!/access_token=/.test(h)) return; const q=new URLSearchParams(h.slice(1));
@@ -470,16 +471,53 @@ function handleAuthHash(){ const h=location.hash; if(!/access_token=/.test(h)) r
 function pwSheet(){ return `<div class="between"><h2 class="title-l">Nouveau mot de passe</h2><button class="icon-btn glass" data-act="closeSheet" aria-label="Fermer">${svg('x',16)}</button></div>
   <label class="f">Nouveau mot de passe<input type="password" id="np" autocomplete="new-password"></label><div><button class="btn primary" data-act="setPw">Enregistrer</button></div>`; }
 /* photos : base en ligne si connecté, sinon dans l'appareil (IndexedDB) */
-function idb(op,arg){ return new Promise((res,rej)=>{ let q; try{ q=indexedDB.open('elan',1); }catch(e){ rej(e); return; }
-  q.onupgradeneeded=()=>q.result.createObjectStore('photos',{keyPath:'id'}); q.onerror=()=>rej(q.error);
-  q.onsuccess=()=>{ const tx=q.result.transaction('photos',op==='getAll'||op==='get'?'readonly':'readwrite'), st=tx.objectStore('photos'), r=arg===undefined?st[op]():st[op](arg); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }; }); }
+function idb(op,arg){ return new Promise((res,rej)=>{ let q; try{ q=indexedDB.open('elan',2); }catch(e){ rej(e); return; }
+  q.onupgradeneeded=()=>{ const db=q.result; if(!db.objectStoreNames.contains('photos')) db.createObjectStore('photos',{keyPath:'id'}); if(!db.objectStoreNames.contains('snaps')) db.createObjectStore('snaps',{keyPath:'d'}); }; q.onerror=()=>rej(q.error);
+  q.onsuccess=()=>{ const store=op.startsWith('snap')?'snaps':'photos'; op=op.replace(/^snap/,'').replace(/^./,c=>c.toLowerCase()); const tx=q.result.transaction(store,op==='getAll'||op==='get'?'readonly':'readwrite'), st=tx.objectStore(store), r=arg===undefined?st[op]():st[op](arg); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }; }); }
 const PH={
   async list(){ if(MODE==='supa') return await SB.req('/rest/v1/elan_photos?select=id,d,thumb&order=d.asc,created_at.asc'); const a=await idb('getAll'); return (a||[]).sort((x,y)=>x.d.localeCompare(y.d)).map(({id,d,thumb})=>({id,d,thumb})); },
   async get(id){ if(MODE==='supa'){ const r=await SB.req('/rest/v1/elan_photos?select=id,d,data&id=eq.'+encodeURIComponent(id)); return r&&r[0]; } return idb('get',id); },
   async add(x){ if(MODE==='supa') return SB.req('/rest/v1/elan_photos',{method:'POST',headers:{Prefer:'return=minimal'},body:{d:x.d,thumb:x.thumb,data:x.data}}); return idb('put',{...x,id:'p'+Date.now()}); },
   async del(id){ if(MODE==='supa') return SB.req('/rest/v1/elan_photos?id=eq.'+encodeURIComponent(id),{method:'DELETE'}); return idb('delete',id); },
 };
-let PHOTOS=null, PH_LOADING=false;
+let PHOTOS=null, PH_LOADING=false, SNAPS=null, DUO=null;
+const DUO_CH=[{id:'min',n:'90 minutes chacun',t:90,u:'min'},{id:'days',n:'5 jours actifs chacun',t:5,u:'jours'},{id:'sess',n:'6 séances chacun',t:6,u:'séances'},{id:'kcal',n:'500 kcal chacun',t:500,u:'kcal'}];
+function myWeek(){ const w=weekSessions(); return {wk:monday(),days:new Set(w.map(x=>x.d)).size,min:w.reduce((a,x)=>a+(x.min||0),0),sess:w.length,kcal:w.reduce((a,x)=>a+sKcal(x),0)}; }
+function myStats(){ return {...myWeek(),streak:dayStreak(),best:Math.max(D.s.best||0,dayStreak()),last:(D.s.sessions[D.s.sessions.length-1]||{}).d||null,tier:getTier(),goal:goal()}; }
+async function publishShare(){ if(MODE!=='supa') return; try{ const x=SB.sess(); if(!x) return; const body={user_id:x.uid,name:(D.s.name||'').slice(0,30),stats:myStats(),updated_at:new Date().toISOString()};
+  const j=JSON.stringify([body.name,body.stats]); if(LS.get('elan_shared')===j) return;
+  await SB.req('/rest/v1/elan_share?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body}); LS.set('elan_shared',j); }catch(e){} }
+async function loadDuo(){ if(MODE!=='supa'){ DUO={off:true}; return; } DUO={loading:true};
+  try{ await publishShare(); const x=SB.sess(); const [links,shares]=await Promise.all([SB.req('/rest/v1/elan_duo?select=a,b,challenge'),SB.req('/rest/v1/elan_share?select=user_id,code,name,stats,updated_at')]);
+    const me=(shares||[]).find(r=>r.user_id===x.uid)||{}, friends=(links||[]).map(l=>{ const fid=l.a===x.uid?l.b:l.a; return {a:l.a,b:l.b,challenge:l.challenge,f:(shares||[]).find(r=>r.user_id===fid)||{user_id:fid,name:'Ton ami',stats:{}}}; });
+    DUO={code:me.code,friends}; }catch(e){ DUO={err:true}; } if(VIEW==='progres'&&PG_TAB==='duo') softRender(); else if(VIEW==='today') softRender(); }
+function duoProg(ch,st){ if(!ch||!st||st.wk!==ch.wk) return 0; const c=DUO_CH.find(z=>z.id===ch.id); return c?Math.min(c.t,st[c.id]||0):0; }
+function duoCheck(){ if(!DUO||!DUO.friends) return; const w=myWeek(); DUO.friends.forEach(f=>{ const ch=f.challenge; if(!ch||ch.wk!==monday()) return; const c=DUO_CH.find(z=>z.id===ch.id); if(c&&(w[c.id]||0)>=c.t){ D.s.duoDone=D.s.duoDone||{}; D.s.duoDone[ch.wk+':'+f.f.user_id]=true; } }); }
+function duoTodo(){ if(!DUO||!DUO.friends) return ''; const f=DUO.friends.find(z=>z.challenge&&z.challenge.wk===monday()); if(!f) return ''; const c=DUO_CH.find(z=>z.id===f.challenge.id); if(!c) return '';
+  const me=Math.min(c.t,myWeek()[c.id]||0), him=duoProg(f.challenge,f.f.stats);
+  return `<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">⚑</span><span class="tx"><b>Défi duo · ${esc(c.n)}</b><span>Toi ${fr(me)}/${c.t} · ${esc(f.f.name||'Ton ami')} ${fr(him)}/${c.t}</span></span><a class="btn sm" href="#progres" data-act="pgtab" data-id="duo">Voir</a></li>`; }
+function vDuo(){ if(window.claude) return '<section class="card glass"><span class="h-sec">Duo</span><p class="small sub">Le mode duo se joue dans l’appli iPhone, avec ton compte.</p></section>';
+  if(MODE!=='supa') return '<section class="card glass"><span class="h-sec">Duo</span><p class="small sub">Connecte-toi dans Compte pour jouer en duo avec un ami.</p><div><a class="btn sm primary" href="#compte">Me connecter</a></div></section>';
+  if(!DUO||DUO.loading) return '<section class="card glass"><p class="small muted">Chargement…</p></section>';
+  if(DUO.err) return '<section class="card glass"><p class="small sub">Impossible de charger le duo pour l’instant.</p><div><button class="btn sm" data-act="duoReload">Réessayer</button></div></section>';
+  const w=myWeek(), mon=monday();
+  const cards=DUO.friends.map(f=>{ const st=f.f.stats||{}, fresh=st.wk===mon, ch=f.challenge&&f.challenge.wk===mon?f.challenge:null, c=ch&&DUO_CH.find(z=>z.id===ch.id);
+    const bar=(lab,v,t)=>`<div><div class="between xs"><span>${esc(lab)}</span><span>${fr(v)} / ${t}</span></div><div class="bar"><i style="width:${Math.round(Math.min(1,v/t)*100)}%"></i></div></div>`;
+    return `<section class="card glass"><div class="between"><span class="h-sec">${esc(f.f.name||'Ton ami')}</span><span class="small muted">${st.last?'dernière séance le '+fmtDate(st.last):'pas encore de séance'}</span></div>
+      <div class="grid3"><div class="stat"><b>${st.streak||0}</b><span>jours de série</span></div><div class="stat"><b>${fresh?st.days||0:0}/7</b><span>jours cette semaine</span></div><div class="stat"><b>${fresh?st.min||0:0}</b><span>min cette semaine</span></div></div>
+      ${c?`<div class="label">Défi de la semaine · ${esc(c.n)}</div>${bar('Toi',Math.min(c.t,w[c.id]||0),c.t)}${bar(f.f.name||'Ton ami',duoProg(ch,st),c.t)}`
+        :`<div class="label">Lancer un défi pour cette semaine</div><div class="chips">${DUO_CH.map(z=>`<button class="pill" data-act="duoSet" data-a="${f.a}" data-b="${f.b}" data-c="${z.id}">${esc(z.n)}</button>`).join('')}</div>`}
+      <div><button class="link xs" data-act="duoUnlink" data-a="${f.a}" data-b="${f.b}" data-confirm>Retirer ce duo</button></div></section>`; }).join('');
+  return `${cards}<section class="card glass"><span class="h-sec">${DUO.friends.length?'Ajouter un ami':'Joue en duo'}</span>
+    <p class="small sub">Donne ton code à un ami qui a un compte, ou entre le sien. Vous verrez la série et la semaine de l’autre, et vous pourrez lancer des défis communs.</p>
+    <div class="between" style="align-items:center"><span class="small">Ton code</span><b style="font-size:1.4rem;letter-spacing:.12em">${esc(DUO.code||'…')}</b></div>
+    <div class="row"><input type="text" id="duo_code" maxlength="6" placeholder="Code de ton ami" autocapitalize="characters" style="max-width:10rem" aria-label="Code de ton ami"><button class="btn sm primary" data-act="duoLink">Relier</button></div></section>`; }
+async function snapshot(force){ try{ const d=iso(); if(!force&&LS.get('elan_snap')===d) return; if(!D.s.sessions.length&&!D.s.tests.length) return;
+  await idb('snapPut',{d,t:Date.now(),s:clone(D.s),r:clone(D.r)}); LS.set('elan_snap',d);
+  const all=await idb('snapGetAllKeys'); const old=(all||[]).sort().slice(0,-14); for(const k of old) await idb('snapDelete',k); SNAPS=null; }catch(e){} }
+async function loadSnaps(){ try{ SNAPS=((await idb('snapGetAll'))||[]).sort((a,b)=>b.d.localeCompare(a.d)).map(x=>({d:x.d,n:(x.s.sessions||[]).length})); }catch(e){ SNAPS=[]; } const el=$('#snaps'); if(el) el.innerHTML=snapsInner(); }
+function snapsInner(){ if(SNAPS===null) return '<p class="small muted">Chargement…</p>'; if(!SNAPS.length) return '<p class="small muted">La première sauvegarde se fera après ta prochaine séance.</p>';
+  return `<ul class="list">${SNAPS.map(x=>`<li><span class="small">${fmtDate(x.d)}<br><span class="xs muted">${x.n} séance${x.n>1?'s':''}</span></span><button class="btn sm" data-act="restoreSnap" data-d="${x.d}" data-confirm>Restaurer</button></li>`).join('')}</ul>`; }
 async function loadPhotos(){ if(PH_LOADING) return; PH_LOADING=true; try{ PHOTOS=(await PH.list())||[]; }catch(e){ PHOTOS=[]; } PH_LOADING=false; const el=$('#photos'); if(el) el.innerHTML=photosInner(); }
 function photosInner(){ if(PHOTOS===null) return '<p class="small muted">Chargement…</p>';
   if(!PHOTOS.length) return '<p class="small muted">Une photo par mois, même pose, même lumière : c’est le meilleur moyen de voir les changements.</p>';
@@ -487,7 +525,7 @@ function photosInner(){ if(PHOTOS===null) return '<p class="small muted">Chargem
 async function shrink(file,max,q){ const url=URL.createObjectURL(file); try{ const img=new Image(); img.src=url; await img.decode(); const k=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight)), c=document.createElement('canvas');
   c.width=Math.round(img.naturalWidth*k); c.height=Math.round(img.naturalHeight*k); c.getContext('2d').drawImage(img,0,0,c.width,c.height); return c.toDataURL('image/jpeg',q); } finally{ URL.revokeObjectURL(url); } }
 async function addPhoto(f){ if(!f) return; toast('Ajout de la photo…'); try{ const data=await shrink(f,900,.8), thumb=await shrink(f,240,.7); await PH.add({d:iso(),thumb,data}); PHOTOS=null; await loadPhotos(); toast('Photo ajoutée.'); }catch(e){ toast(e&&e.code==='offline'?'Pas de connexion : réessaie plus tard.':'Impossible d’ajouter cette photo.'); } }
-const FN=SUPA.url+'/functions/v1/elan-push', PUSH_READY=false; /* activé quand le serveur de rappels sera branché */
+const FN=SUPA.url+'/functions/v1/elan-push', PUSH_READY=true; /* activé quand le serveur de rappels sera branché */
 const u8=b=>{ const s=atob(b.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-b.length%4)%4)); return Uint8Array.from(s,c=>c.charCodeAt(0)); };
 async function pushSub(){ if(!('serviceWorker' in navigator)||!('PushManager' in window)) return null; const reg=await navigator.serviceWorker.ready; return reg.pushManager.getSubscription(); }
 async function savePushRow(sub){ const j=sub.toJSON(); await SB.req('/rest/v1/elan_push?on_conflict=endpoint',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:{endpoint:j.endpoint,p256dh:j.keys.p256dh,auth:j.keys.auth,remind:D.s.remind||'18:30',tz:Intl.DateTimeFormat().resolvedOptions().timeZone||'Europe/Paris'}}); }
@@ -517,7 +555,7 @@ async function write(k){ const y=SY[k]; if(!y.ref) return; if(y.writing){y.again
 function readLocal(k){ const v=LS.get('elan_'+k); if(!v) return null; try{return JSON.parse(v)}catch(e){return null} }
 function applyTheme(){ if(window.claude) return; const t=D.s.theme; if(t==='light'||t==='dark') document.documentElement.dataset.theme=t; else delete document.documentElement.dataset.theme; }
 async function init(){
-  handleAuthHash();
+  handleAuthHash(); setTimeout(()=>snapshot(false),4000);
   render();
   let db=null,user=null,uid=null;
   if(window.claude&&typeof claude.use==='function'){
@@ -622,7 +660,7 @@ function byPosition(list){ const f=list.filter(e=>FLOOR.has(e)), u=list.filter(e
 const TCOL={tirage:'#0F9F73',skills:'#E81F70',cardio:'#F04A24',haut:'#2F6BFF',jambes:'#7A4DFF',abdos:'#0F9F73',full:'#E81F70',surprise:'#FFB000',mobilite:'#14B8C9'};
 const TON=id=>id==='surprise'||id==='mobilite'?'#121116':'#FFFFFF';
 const TSHORT={tirage:'Tirage',skills:'Skills',cardio:'Cardio',haut:'Haut',jambes:'Jambes',abdos:'Abdos',full:'Full',surprise:'Surprise',mobilite:'Mobilité'};
-/* Illustrations Élan : un sportif en traits épais + décor, couleur du jour en fond */
+/* Illustrations Hermes : un sportif en traits épais + décor, couleur du jour en fond */
 const ILLU=(()=>{
   const L=(a,b,w,o)=>`<path d="M${a[0]} ${a[1]}L${b[0]} ${b[1]}" stroke-width="${w}" ${o?`opacity="${o}"`:''}/>`;
   const C=(a,b,c,w,o)=>`<path d="M${a[0]} ${a[1]}Q${b[0]} ${b[1]} ${c[0]} ${c[1]}" stroke-width="${w}" fill="none" ${o?`opacity="${o}"`:''}/>`;
@@ -716,6 +754,11 @@ function dailyTabata0(opts={}){
   out.push(cool);
   return {k:'T',...meta,title:(th.id==='surprise'?'Full body':th.f==='cardio_court'?'Cardio court':th.n),fmt:'Tabata '+w+' s / '+rs+' s · '+blocks+' bloc'+(blocks>1?'s':''),n:blocks,blocks:out}; }
 const miniSession=()=>qp(miniSession0());
+const min3Session=()=>qp(min3Session0());
+function min3Session0(){ const th=todayTheme(), r=rng(dayIndex()*17+3);
+  if(th.f==='mobilite') return {k:'min3',theme:th.id,themeN:th.n,title:'3 minutes',fmt:'6 étirements de 30 s',n:0,blocks:[{t:'Mobilité',type:'circuit',items:MOB.slice(0,6).map(e=>[e,30])}]};
+  const ex=byPosition(pickEx(th.pool,2,r).slice(0,2));
+  return {k:'min3',theme:th.id,themeN:th.n,title:'3 minutes',fmt:'6 rounds de 20 s / 10 s : juste de quoi garder ta série',n:1,blocks:[{t:'3 minutes',type:'tabata',a:ex[0],b:ex[1]||ex[0],rounds:6,work:20,rest:10}]}; }
 function miniSession0(){ const p=dailyTabata0({short:true}); return {...p,k:'mini',title:'Version courte · '+p.title}; }
 function tierText(t){ const [w,r]=tierWork(t); return `${tierBlocks(t)} bloc${tierBlocks(t)>1?'s':''} de ${tierRounds(t)} rounds ${w}/${r} s, exercices ${['faciles','intermédiaires','avancés'][tierDiff(t)-1]}`; }
 function tierUnlock(t){ if(t>=10) return 'Intensité maximale atteinte : le défi, c’est de la garder.';
@@ -762,13 +805,21 @@ function dayStreak(){ const days=new Set(D.s.sessions.map(x=>x.d)); if(!days.siz
   return n; }
 function jokerUsed(){ const days=new Set(D.s.sessions.map(x=>x.d)), m=monday(), t=iso(), first=[...days].sort()[0]; if(!first) return false;
   for(let i=0;i<7;i++){ const d=addDays(m,i); if(d>=t) break; if(d>=first&&!days.has(d)) return true; } return false; }
+function bestReps(upTo){ const m={}; D.s.sessions.slice(0,upTo??D.s.sessions.length).forEach(x=>{ if(x.reps) for(const e in x.reps){ const v=+x.reps[e]||0; if(!m[e]||v>m[e].v) m[e]={v,d:x.d}; } }); return m; }
+function season(d=iso()){ const [y,mo]=d.split('-').map(Number), n=mo===12||mo<=2?'Hiver':mo<=5?'Printemps':mo<=8?'Été':'Automne', yy=mo===12?y+1:y, start=mo===12?`${y}-12-01`:mo<=2?`${y-1}-12-01`:mo<=5?`${y}-03-01`:mo<=8?`${y}-06-01`:`${y}-09-01`;
+  return {n:n+' '+(n==='Hiver'?yy:y),start}; }
 function badges(){ const ss=D.s.sessions, best=Math.max(D.s.best||0,dayStreak()), t=D.s.tests, kc=ss.reduce((a,x)=>a+sKcal(x),0);
   return [
     {n:'Premier pas',d:'Terminer une séance',g:ss.length>=1},{n:'Trois jours',d:'3 jours d’affilée',g:best>=3},
     {n:'Une semaine',d:'7 jours d’affilée',g:best>=7},{n:'Habitude',d:'21 jours d’affilée',g:best>=21},
     {n:'1 000 kcal',d:'Brûler 1 000 kcal au total',g:kc>=1000},{n:'Force',d:'12 séances de force',g:progSessions().length>=12},
     {n:'Progrès',d:'Battre ton record de pompes',g:t.length>1&&Math.max(...t.slice(1).map(x=>x.pu))>t[0].pu},
-    {n:'Programme bouclé',d:'Finir les 12 semaines de force',g:D.s.cycle>1||position()>=24}]; }
+    {n:'Programme bouclé',d:'Finir les 12 semaines de force',g:D.s.cycle>1||position()>=24},
+    {n:'Record battu',d:'Battre un record de répétitions',g:(D.s.recBroken||0)>=1},
+    {n:'Week-end',d:'Réussir 3 défis du week-end',g:Object.values(D.s.wkc||{}).filter(x=>x&&x.done).length>=3},
+    {n:'Calisthénie',d:'Atteindre la 3e variante en calisthénie',g:(D.s.caliMax||0)>=3},
+    {n:'Duo',d:'Réussir un défi duo',g:Object.values(D.s.duoDone||{}).some(Boolean)},
+    (()=>{ const se=season(); return {n:se.n,d:'20 séances dans la saison',g:ss.filter(x=>x.d>=se.start).length>=20}; })()]; }
 function xpFor(meta,min,doneTodayBefore,streakAfter){ return Math.round(min*10)+(doneTodayBefore?0:20)+5*Math.min(streakAfter,10)+(isForce(meta.k)?30:0); }
 
 /* ============ REPAS ============ */
@@ -799,17 +850,25 @@ function prunePlan(){ const lim=addDays(monday(),-14); for(const k of Object.key
 const VIEWS=[['today','Aujourd’hui','home'],['programme','Entraînement','dumb'],['progres','Progrès','chart'],['repas','Repas','food'],['compte','Compte','user']];
 let PG_TAB=LS.get('elan_pg')||'apercu';
 let VIEW='today', PROG_TAB='hub', REPAS_TAB=LS.get('elan_rt')||'semaine', PLAN_OFF=0, RFILTER='toutes', RSEARCH='', TESTFORM=false, SEL_USER=null;
-function route(){ const h=location.hash.slice(1); VIEW=VIEWS.some(v=>v[0]===h)?h:'today'; if(VIEW==='programme') PROG_TAB='hub'; render(); window.scrollTo(0,0); }
+function route(){ const h=location.hash.slice(1); if(h==='seance'||h==='3min'){ history.replaceState(null,'','#today'); VIEW='today'; render(); setTimeout(()=>h==='3min'?ACT.startMin3():ACT.brief(),60); return; } VIEW=VIEWS.some(v=>v[0]===h)?h:'today'; if(VIEW==='programme') PROG_TAB='hub'; render(); window.scrollTo(0,0); }
 function render(){
   applyTheme(); applyDay();
   $('#tabs').innerHTML=VIEWS.slice(0,4).map(([id,l,ic])=>`<a href="#${id}" ${VIEW===id?'aria-current="page"':''}>${svg(ic)}${l}</a>`).join('');
   $('#view').innerHTML=({today:vToday,programme:vProgramme,progres:vProgres,repas:vRepas,compte:vCompte})[VIEW]();
   if(VIEW==='progres'&&PG_TAB==='corps'&&PHOTOS===null) loadPhotos();
+  if(VIEW==='compte'&&SNAPS===null) loadSnaps();
+  if(VIEW==='progres'&&PG_TAB==='duo'&&DUO===null) loadDuo();
   fitTitles();
 }
 function fitTitles(){ document.querySelectorAll('.fit').forEach(el=>{ let fs=parseFloat(getComputedStyle(el).fontSize), n=0; if(el.scrollWidth>el.clientWidth+1){ fs=Math.max(18,Math.floor(fs*el.clientWidth/el.scrollWidth)); el.style.fontSize=fs+'px'; } while(el.scrollWidth>el.clientWidth+1&&fs>18&&n++<40){ fs-=2; el.style.fontSize=fs+'px'; } }); }
 try{ document.fonts?.ready.then(()=>{ document.querySelectorAll('.fit').forEach(el=>el.style.fontSize=''); render(); }); }catch(e){}
 function fitSz(t,max,off){ const L=Math.max(4,...String(t).split(/\s+/).map(w=>w.length)); return `font-size:min(${max}rem,calc((min(100vw,600px) - ${off}px) / ${(L*0.5).toFixed(2)}))`; }
+const WKC=[{id:'squats',n:'200 squats',t:200,st:20,u:'squats'},{id:'planche',n:'5 min de planche cumulée',t:300,st:30,u:'s'},{id:'burpees',n:'50 burpees sans saut',t:50,st:10,u:'burpees'},{id:'deux',n:'Une séance samedi et dimanche',t:2,auto:true,u:'séances'},
+  {id:'pompes',n:'100 pompes (toutes variantes)',t:100,st:10,u:'pompes'},{id:'marche',n:'60 min de marche',t:60,st:10,u:'min'},{id:'fentes',n:'120 fentes',t:120,st:20,u:'fentes'}];
+function wkChallenge(){ const d=dow(); if(d<5) return null; const m=monday(), c=WKC[weekNo()%WKC.length]; const st=(D.s.wkc||{})[m]||{p:0};
+  let p=st.p||0; if(c.auto){ const sat=addDays(m,5), sun=addDays(m,6); p=[sat,sun].filter(x=>D.s.sessions.some(y=>y.d===x)).length; }
+  return {...c,m,p:Math.min(p,c.t),done:p>=c.t}; }
+function wkItem(c){ return `<li><span class="ic" style="background:#FFF0D6;color:#8A5A00">WE</span><span class="tx"><b>Défi du week-end · ${esc(c.n)}</b><span>${c.p} / ${c.t} ${c.u}${c.done?' · réussi !':''}</span></span>${c.done||c.auto?(c.done?'<span class="small">✓</span>':''):`<button class="btn sm" data-act="wkAdd">+${c.st}</button>`}</li>`; }
 function goalPick(){ const g=goal(); return `<div class="goalpick">${Object.entries(GOALS).map(([k,o])=>`<button data-act="setGoal" data-g="${k}" aria-pressed="${g===k}"><b>${o.n}</b><span>${o.d}</span></button>`).join('')}</div>`; }
 function header(title,sub){
   return `<header class="head"><div style="min-width:0"><div class="label">${sub||longDate()}</div><h1 class="title-xl fit" style="${fitSz(title,2.5,100)}">${title}</h1></div>
@@ -847,8 +906,11 @@ function vToday(){
        <div class="chips">${exNames(tb).slice(0,6).map(e=>`<button class="pill" data-act="exInfo" data-ex="${e}">${EX[e].n}</button>`).join('')}</div>
        <button class="go" data-act="startDaily">${svg('play',18)}C’est parti</button>
        <div style="display:flex;flex-direction:column;gap:6px"><div class="between xs" style="font-weight:700"><span>Intensité ${tb.tier}/10</span><span>${tb.tier>=10?'maximum':'prochain palier dans '+left+' séance'+(left>1?'s':'')}</span></div><div class="hbar"><i style="width:${pct}%"></i></div></div>
-       <div style="text-align:center"><span style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px"><button class="hlink" data-act="brief">Voir le déroulé</button><button class="hlink" data-act="startMini">Version courte</button></span></div></section>`;
+       <div style="text-align:center"><span style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px"><button class="hlink" data-act="brief">Voir le déroulé</button><button class="hlink" data-act="startMini">Version courte</button><button class="hlink" data-act="startMin3">3 min</button></span></div></section>`;
   const todo=[];
+  const wch=wkChallenge(); if(wch) todo.push(wkItem(wch));
+  const duoLine=duoTodo(); if(duoLine) todo.push(duoLine);
+  if(!doneToday.length&&new Date().getHours()>=18) todo.push(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">3’</span><span class="tx"><b>Pas d’énergie ?</b><span>3 minutes suffisent pour garder ta série</span></span><button class="btn sm" data-act="startMin3">3 min</button></li>`);
   if(!D.s.goalSet) todo.push(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">★</span><span class="tx"><b>Choisis ton objectif</b><span>Perdre du poids, te muscler, ou les deux : ta semaine s’adapte</span></span><button class="btn sm primary" data-act="goalSheet">Choisir</button></li>`);
   if(testDue()&&!TESTFORM) todo.push(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">?</span><span class="tx"><b>Où en es-tu ?</b><span>3 mini-tests pour ajuster ton programme</span></span><button class="btn sm primary" data-act="openTest">Faire</button></li>`);
   CHALL.forEach(c=>{ const st=chState(c); if(!st||st.day>30) return; todo.push(`<li><span class="ic" style="background:#FFF0D6;color:#8A5A00">${chTarget(c,st.day)}</span><span class="tx"><b>Défi ${c.n.toLowerCase()} · jour ${st.day}</b><span>${chTarget(c,st.day)} ${c.unit} aujourd’hui</span></span><button class="btn sm ${st.doneToday?'':'primary'}" data-act="doCh" data-id="${c.id}">${st.doneToday?'✓':'Valider'}</button></li>`); });
@@ -973,9 +1035,9 @@ function vProgres(){
     chart=`<svg viewBox="0 0 ${WW} ${HH}" width="100%" role="img" aria-label="Évolution du poids"><polyline points="${pts}" fill="none" stroke="var(--fill)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${px(w.length-1)}" cy="${py(w[w.length-1].kg)}" r="4.5" fill="var(--fill)"/>
       <text x="12" y="${HH-3}" font-size="10" fill="var(--muted)">${fmtDate(w[0].d)}</text><text x="${WW-12}" y="${HH-3}" font-size="10" fill="var(--muted)" text-anchor="end">${fmtDate(w[w.length-1].d)}</text>
       <text x="${px(w.length-1)-8}" y="${py(w[w.length-1].kg)-10}" font-size="12" font-weight="700" fill="var(--ink)" text-anchor="end">${String(w[w.length-1].kg).replace('.',',')} kg</text></svg>`; }
-  const NAMES={A:'Force · haut du corps',B:'Force · jambes',C:'Tabata',T:'Séance du jour',mini:'Version courte',libre:'Tabata libre'};
+  const NAMES={min3:'3 minutes',A:'Force · haut du corps',B:'Force · jambes',C:'Tabata',T:'Séance du jour',mini:'Version courte',libre:'Tabata libre'};
   const t0=s.tests[0], tl=s.tests[s.tests.length-1], delta=(a,b)=>{const d=b-a; return d?` <span class="xs" style="color:var(--good)">${d>0?'+':''}${d}</span>`:'';};
-  const seg=`<div class="seg glass" role="group" aria-label="Section progrès">${[['apercu','Vue d’ensemble'],['corps','Corps'],['historique','Historique']].map(([id,l])=>`<button aria-pressed="${PG_TAB===id}" data-act="pgtab" data-id="${id}">${l}</button>`).join('')}</div>`;
+  const seg=`<div class="seg glass" role="group" aria-label="Section progrès">${[['apercu','Vue d’ensemble'],['corps','Corps'],['duo','Duo'],['historique','Historique']].map(([id,l])=>`<button aria-pressed="${PG_TAB===id}" data-act="pgtab" data-id="${id}">${l}</button>`).join('')}</div>`;
   const tierCard=(()=>{ const t=getTier(), pts=D.s.tierPts||0;
     return `<section class="card glass"><div class="between"><div><div class="label">Intensité</div><div style="font-size:3rem;font-weight:300;letter-spacing:-.04em;line-height:1">${t}<span class="small muted">/10</span></div></div><div style="text-align:right;max-width:60%"><div class="small sub">${tierDesc(t)}</div></div></div>
     <div class="bar"><i style="width:${t>=10?100:Math.round(pts/6*100)}%"></i></div>
@@ -997,8 +1059,9 @@ function vProgres(){
   <span class="h-sec" style="padding:0 4px">Trophées</span>
   <div class="trophies">${badges().map((b,i)=>`<div class="trophy glass ${b.g?'got':''}"><span class="m">${b.g?'✓':i+1}</span><strong class="small">${b.n}</strong><span class="xs muted">${b.d}</span></div>`).join('')}</div>
 `,corps:`${forceCard()}
-  <section class="card glass"><div class="between"><span class="h-sec">Tests</span><button class="btn sm" data-act="openTest">Refaire le test</button></div>
-    ${t0?`<div class="grid3"><div class="stat"><b>${tl.pu}${delta(t0.pu,tl.pu)}</b><span>pompes</span></div><div class="stat"><b>${tl.sq}${delta(t0.sq,tl.sq)}</b><span>squats / min</span></div><div class="stat"><b>${tl.pl}${delta(t0.pl,tl.pl)}</b><span>s de planche</span></div></div>
+  ${recordsCard()}
+  <section class="card glass"><div class="between"><span class="h-sec">Tests</span><button class="btn sm" data-act="openTest">Refaire le test</button></div>${testsChart()}
+    ${t0?`${s.tests.length>1?'':`<div class="grid3"><div class="stat"><b>${tl.pu}${delta(t0.pu,tl.pu)}</b><span>pompes</span></div><div class="stat"><b>${tl.sq}${delta(t0.sq,tl.sq)}</b><span>squats / min</span></div><div class="stat"><b>${tl.pl}${delta(t0.pl,tl.pl)}</b><span>s de planche</span></div></div>`}
       ${s.tests.length>1?`<div class="tbl-wrap"><table class="t"><thead><tr><th>Date</th><th>Pompes</th><th>Squats</th><th>Planche</th></tr></thead><tbody>${s.tests.map(t=>`<tr><td>${fmtDate(t.d)}</td><td>${t.pu}</td><td>${t.sq}</td><td>${t.pl} s</td></tr>`).join('')}</tbody></table></div>`:''}`:'<p class="small muted">Aucun test enregistré.</p>'}</section>
   ${TESTFORM?testForm():''}
   ${measuresCard()}
@@ -1009,7 +1072,7 @@ function vProgres(){
     <p class="xs muted">Une pesée par semaine, le matin. Ton poids sert aussi à estimer les calories brûlées.</p></section>
 `,historique:`  <section class="card glass"><div class="between"><span class="h-sec">Historique</span>${ss.length?'<button class="btn sm danger" data-act="undoLast" data-confirm>Supprimer la dernière</button>':''}</div>
     ${ss.length?`<ul class="list">${ss.slice(-10).reverse().map(x=>`<li><span class="small">${NAMES[x.k]||x.k}<br><span class="xs muted">${fmtDate(x.d)} · ${x.min} min</span></span><span class="small num" style="text-align:right">${fr(sKcal(x))} kcal<br><span class="xs muted">+${fr(sXp(x))} XP</span></span></li>`).join('')}</ul>`:'<p class="small muted">Ta première séance apparaîtra ici.</p>'}</section>
-`}[PG_TAB];
+`,duo:vDuo()}[PG_TAB]??'';
   return header('Progrès')+seg+body+syncLine();
 }
 function notifCard(){ const s=D.s, time=`<input type="time" id="remind_t" value="${esc(s.remind||'18:30')}" style="width:7.5rem" aria-label="Heure du rappel">`;
@@ -1035,6 +1098,9 @@ function vCompte(){ const s=D.s;
     <div class="between" style="align-items:center"><span class="small">Mode sans bruit : pas de sauts (appart, voisins)</span><button class="btn sm" data-act="toggleQuiet">${s.quiet?'Activé':'Désactivé'}</button></div></section>
   ${notifCard()}
   ${window.claude?'':`<section class="card glass"><span class="h-sec">Apparence</span><div class="seg" role="group" aria-label="Thème" style="background:var(--track)">${[['auto','Automatique'],['light','Clair'],['dark','Sombre']].map(([v,l])=>`<button aria-pressed="${(s.theme||'auto')===v}" data-act="setTheme" data-v="${v}">${l}</button>`).join('')}</div></section>`}
+  <section class="card glass"><div class="between" style="align-items:center"><span class="h-sec">Sauvegardes</span><button class="btn sm" data-act="downloadBackup">Télécharger</button></div>
+    <p class="xs muted">Une sauvegarde par jour sur cet appareil, les 14 derniers jours. Restaurer remplace ta progression et tes recettes par celles du jour choisi.</p>
+    <div id="snaps">${snapsInner()}</div></section>
   <details class="card glass"><summary class="h-sec">Transférer mes données</summary>
     <p class="xs muted">Pour passer ta progression et tes recettes d’une version de l’appli à l’autre (claude.ai ↔ appli iPhone).</p>
     <div><button class="btn sm" data-act="copyData">Copier mes données</button></div>
@@ -1047,6 +1113,20 @@ function forceCard(){ const hist={}; D.s.sessions.forEach(x=>{ if(x.reps) for(co
   return `<section class="card glass"><span class="h-sec">Ta force</span><p class="xs muted">Meilleure série par séance, sur les dernières séances.</p><ul class="list">${ex.map(e=>{ const h=hist[e].slice(-12), v=h.map(x=>x.v), mn=Math.min(...v), mx=Math.max(...v), last=v[v.length-1], dlt=last-v[0];
     const pts=v.map((y,i)=>`${(v.length<2?45:4+i*82/(v.length-1)).toFixed(1)},${(mx===mn?13:22-(y-mn)/(mx-mn)*18).toFixed(1)}`).join(' ');
     return `<li><span class="small">${exBtn(e)}<br><span class="xs muted">${h.length} séance${h.length>1?'s':''}</span></span><svg class="spark" viewBox="0 0 90 26" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--fill)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><span class="dose">${last}${dlt?` <span class="xs" style="color:var(--good)">${dlt>0?'+':''}${dlt}</span>`:''}</span></li>`; }).join('')}</ul></section>`; }
+function testsChart(){ const t=D.s.tests; if(t.length<2) return '<p class="xs muted">Refais le test toutes les 4 semaines pour voir tes courbes.</p>';
+  const one=(k,lab,u)=>{ const v=t.map(x=>+x[k]||0), mn=Math.min(...v), mx=Math.max(...v), W=150,H=64, px=i=>8+i*(W-16)/(v.length-1), py=y=>mx===mn?H/2:H-12-(y-mn)/(mx-mn)*(H-26);
+    const pts=v.map((y,i)=>px(i).toFixed(1)+','+py(y).toFixed(1)).join(' '), last=v.length-1, d=v[last]-v[0];
+    return `<figure class="tchart"><figcaption><span class="xs muted">${lab}</span><b>${v[last]}${u}</b>${d?`<span class="xs" style="color:${d>0?'var(--good)':'var(--muted)'}">${d>0?'+':''}${d}${u}</span>`:''}</figcaption>
+      <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${lab} : de ${v[0]} à ${v[last]}${u}"><polyline points="${pts}" fill="none" stroke="var(--fill)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      ${v.map((y,i)=>`<circle cx="${px(i).toFixed(1)}" cy="${py(y).toFixed(1)}" r="${i===last?4.5:3}" fill="${i===last?'var(--fill)':'var(--bg)'}" stroke="var(--fill)" stroke-width="2"><title>${fmtDate(t[i].d)} : ${y}${u}</title></circle>`).join('')}</svg></figure>`; };
+  return `<div class="tcharts">${one('pu','Pompes','')}${one('sq','Squats / min','')}${one('pl','Planche',' s')}</div>`; }
+function recordsCard(){ const m=bestReps(), ex=Object.keys(m).filter(e=>EX[e]).sort((a,b)=>m[b].d.localeCompare(m[a].d)).slice(0,8), t=D.s.tests;
+  const tb=t.length?{pu:Math.max(...t.map(x=>x.pu)),sq:Math.max(...t.map(x=>x.sq)),pl:Math.max(...t.map(x=>x.pl))}:null;
+  if(!ex.length&&!tb) return '';
+  return `<section class="card glass"><span class="h-sec">Tes records</span>
+    ${tb?`<div class="grid3"><div class="stat"><b>${tb.pu}</b><span>pompes d’affilée</span></div><div class="stat"><b>${tb.sq}</b><span>squats en 1 min</span></div><div class="stat"><b>${tb.pl} s</b><span>planche</span></div></div>`:''}
+    ${ex.length?`<ul class="list">${ex.map(e=>`<li><span class="small">${esc(EX[e].n)}<br><span class="xs muted">le ${fmtDate(m[e].d)}</span></span><b>${m[e].v}</b></li>`).join('')}</ul>`:''}
+    <p class="xs muted">Meilleure série par exercice dans tes séances. Ajuste les répétitions faites avec − et + pendant la séance.</p></section>`; }
 function measuresCard(){ const m=D.s.measures||[], f=m[0], l=m[m.length-1];
   return `<section class="card glass"><span class="h-sec">Mensurations</span>
   ${l?`<div class="grid2" style="grid-template-columns:repeat(2,minmax(0,1fr))">${MEAS.map(([k,n])=>`<div class="stat"><b>${l[k]!=null?String(l[k]).replace('.',','):'–'}${f!==l&&l[k]!=null&&f[k]!=null&&l[k]!==f[k]?` <span class="xs" style="color:var(--good)">${l[k]>f[k]?'+':''}${String(Math.round((l[k]-f[k])*10)/10).replace('.',',')}</span>`:''}</b><span>${n} (cm)</span></div>`).join('')}</div>
@@ -1308,7 +1388,8 @@ function finish(){ figStop(); P.finished=true; P.min=Math.max(1,Math.round((Date
   P.streakAfter=n; P.xp=xpFor(P.meta,P.min,before,n);
   beep(660,.15); setTimeout(()=>beep(880,.15),180); setTimeout(()=>beep(1100,.3),360); say('Séance terminée. Bravo.'); renderPlayer(); }
 function closePlayer(){ figStop(); if(P) clearInterval(P.iv); P=null; $('#player').hidden=true; $('#player').innerHTML=''; document.body.style.overflow=''; try{WL&&WL.release();}catch(e){} WL=null; try{speechSynthesis.cancel()}catch(e){} render(); }
-function logSession(fb){ const before=badges().filter(b=>b.g).length, m=P.meta;
+function logSession(fb){ const before=badges().filter(b=>b.g).length, m=P.meta, prevBest=bestReps(); let recMsg='';
+  if(P.rec) for(const e in P.rec){ const pb=prevBest[e]; if(pb&&P.rec[e]>pb.v){ recMsg='Nouveau record : '+P.rec[e]+' × '+EX[e].n.toLowerCase()+' !'; D.s.recBroken=(D.s.recBroken||0)+1; } }
   const sess={d:iso(),t:Date.now(),k:m.k,w:m.w||0,min:P.min,kcal:P.kcalF,xp:P.xp,fb:+fb}; if(P.rec&&Object.keys(P.rec).length) sess.reps=P.rec; D.s.sessions.push(sess);
   if(isForce(m.k)) D.s.adj=clamp(D.s.adj+(+fb),-3,3);
   if(m.sk) D.s.seenFmt=[...new Set([...(D.s.seenFmt||[]),m.sk])];
@@ -1317,10 +1398,14 @@ function logSession(fb){ const before=badges().filter(b=>b.g).length, m=P.meta;
     if(m.k==='T'&&P.plan.theme!=='mobilite'){ if(+fb===1) pts+=2; if(+fb===-1){ pts-=2; hard++; } else hard=0; }
     if(hard>=2&&t>1){ t--; pts=0; hard=0; tierMsg='On baisse d’un cran : intensité '+t+'. Mieux vaut tenir que forcer.'; }
     else if(pts>=6&&t<10){ t++; pts-=6; tierMsg='Intensité '+t+' débloquée : '+tierDesc(t)+'.'; }
+    if(P.plan.cali&&m.k==='T'){ const rs=P.steps.filter(x=>x.ty==='reps'), ok=rs.length&&rs.every(x=>(x.done??x.reps)>=x.reps)&&+fb!==-1;
+      D.s.caliOk=ok?(D.s.caliOk||0)+1:0;
+      if(D.s.caliOk>=2&&!tierMsg){ const v=Math.min(4,Math.floor((t-1)/2)), nt=Math.min(10,2*(v+1)+1); if(nt>t){ t=nt; pts=0; D.s.caliOk=0; tierMsg='Toutes tes répétitions, deux fois de suite : variante suivante débloquée ('+EX[CALI.push[0].l[Math.min(4,Math.floor((t-1)/2))]].n.toLowerCase()+'…).'; } } }
+    if(goal()==='muscle') D.s.caliMax=Math.max(D.s.caliMax||0,Math.min(4,Math.floor((t-1)/2))+1);
     D.s.tier=t; D.s.tierPts=clamp(pts,0,5.9); D.s.hardRun=hard; }
   D.s.best=Math.max(D.s.best||0,dayStreak()); SEL_USER=null;
-  save('s'); closePlayer();
-  const nb=badges().filter(b=>b.g), st=dayStreak(); toast(tierMsg||(nb.length>before?'Nouveau trophée : '+nb[nb.length-1].n:'Enregistré. Série : '+st+' jour'+(st>1?'s':'')+'.')); }
+  duoCheck(); save('s'); snapshot(true); closePlayer(); if(MODE==='supa') setTimeout(()=>{ publishShare(); },1500);
+  const nb=badges().filter(b=>b.g), st=dayStreak(); toast(recMsg||tierMsg||(nb.length>before?'Nouveau trophée : '+nb[nb.length-1].n:'Enregistré. Série : '+st+' jour'+(st>1?'s':'')+'.')); }
 
 /* ============ IMPORT AVEC CLAUDE ============ */
 let IMPORT_CTL=null;
@@ -1380,7 +1465,7 @@ const ACT={
   doCh(b){ const c=CHALL.find(x=>x.id===b.dataset.id), st=chState(c); if(!st) return; const ch=D.s.challenges[c.id]; ch.done=st.doneToday?ch.done.filter(d=>d!==st.day):[...ch.done,st.day]; save('s'); render(); if(!st.doneToday) toast(st.day===30?'Défi terminé, bravo !':'Jour '+st.day+' validé.'); },
   dinnerTonight(b){ D.r.plan[iso()+'|s']={r:b.dataset.id,p:1}; prunePlan(); save('r'); render(); toast('Ajouté au dîner de ce soir.'); },
   suggestWeek(){ const n=suggestWeek(); save('r'); render(); toast(n?n+' repas proposés, avec des restes pour cuisiner moins.':'Ta semaine est déjà remplie : vide-la d’abord.'); },
-  async shareWeek(){ const R=recapText(); const text=`Ma semaine sur Élan : ${R.cur.days} jours actifs, ${R.cur.min} min d’effort, ${fr(R.cur.kc)} kcal brûlées. Série en cours : ${dayStreak()} jours.`;
+  async shareWeek(){ const R=recapText(); const text=`Ma semaine sur Hermes : ${R.cur.days} jours actifs, ${R.cur.min} min d’effort, ${fr(R.cur.kc)} kcal brûlées. Série en cours : ${dayStreak()} jours.`;
     if(navigator.share&&!window.claude){ try{ await navigator.share({text}); return; }catch(e){ if(e&&e.name==='AbortError') return; } }
     try{ await navigator.clipboard.writeText(text); toast('Copié : colle-le dans un message.'); }catch(e){ toast(text); } },
   toggleQuiet(){ D.s.quiet=!D.s.quiet; save('s'); render(); },
@@ -1388,7 +1473,7 @@ const ACT={
   async enablePush(){ const m=$('#pushMsg'); const say=t=>{ if(m) m.textContent=t; };
     if(MODE!=='supa'){ say('Connecte-toi d’abord à la synchro.'); return; }
     if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)){ say('Sur iPhone, ajoute d’abord l’appli à l’écran d’accueil (Safari → Partager → Sur l’écran d’accueil), puis ouvre-la depuis son icône.'); return; }
-    try{ const perm=await Notification.requestPermission(); if(perm!=='granted'){ say('Notifications refusées. Tu peux les autoriser dans les réglages de l’iPhone → Notifications → Élan.'); return; }
+    try{ const perm=await Notification.requestPermission(); if(perm!=='granted'){ say('Notifications refusées. Tu peux les autoriser dans les réglages de l’iPhone → Notifications → Hermes.'); return; }
       say('Activation…'); const k=await fetch(FN+'?key=1',{headers:{apikey:SUPA.key}}).then(r=>r.json()); const reg=await navigator.serviceWorker.ready;
       const sub=(await reg.pushManager.getSubscription())||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(k.pub)});
       await savePushRow(sub); D.s.pushOn=true; save('s'); render(); toast('Notifications activées.'); }
@@ -1397,6 +1482,17 @@ const ACT={
       const r=await fetch(FN,{method:'POST',headers:{apikey:SUPA.key,'Content-Type':'application/json'},body:JSON.stringify({test:sub.endpoint})}).then(r=>r.json());
       if(m) m.textContent=r&&r.sent?'Notification envoyée : elle arrive dans quelques secondes.':'Envoi impossible pour le moment.'; }catch(e){ if(m) m.textContent='Envoi impossible pour le moment.'; } },
   async disablePush(){ try{ const sub=await pushSub(); if(sub){ await SB.req('/rest/v1/elan_push?endpoint=eq.'+encodeURIComponent(sub.endpoint),{method:'DELETE'}).catch(()=>{}); await sub.unsubscribe(); } }catch(e){} D.s.pushOn=false; save('s'); render(); toast('Notifications désactivées sur cet appareil.'); },
+  startMin3(){ const p=min3Session(); startPlayer(p,{k:'min3',sk:'tabata'}); },
+  wkAdd(){ const c=wkChallenge(); if(!c||c.auto) return; D.s.wkc=D.s.wkc||{}; const st=D.s.wkc[c.m]||{p:0}; st.p=Math.min(c.t,(st.p||0)+c.st); st.done=st.p>=c.t; D.s.wkc[c.m]=st; save('s'); render(); if(st.done) toast('Défi du week-end réussi !'); },
+  async downloadBackup(){ const txt=JSON.stringify({app:'elan',v:1,d:iso(),s:D.s,r:D.r}), name='hermes-sauvegarde-'+iso()+'.json', blob=new Blob([txt],{type:'application/json'});
+    if(window.claude){ try{ const dl=await claude.use('downloads'); if(dl){ await dl.save({filename:name,data:blob}); return; } }catch(e){} }
+    const url=URL.createObjectURL(blob), a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); },
+  async restoreSnap(b){ try{ const x=await idb('snapGet',b.dataset.d); if(!x) return; D.s=norm('s',x.s); D.r=norm('r',x.r); save('s'); save('r'); render(); toast('Sauvegarde du '+fmtDate(x.d)+' restaurée.'); }catch(e){ toast('Restauration impossible.'); } },
+  duoReload(){ DUO=null; render(); },
+  async duoLink(){ const code=($('#duo_code')?.value||'').trim().toUpperCase(); if(!/^[0-9A-F]{6}$/.test(code)){ toast('Le code fait 6 caractères (chiffres et lettres A à F).'); return; }
+    try{ await publishShare(); const r=await SB.req('/rest/v1/rpc/elan_link',{method:'POST',body:{p_code:code}}); if(r&&r.ok){ toast('Duo créé !'); DUO=null; render(); } else toast(r&&r.err==='self'?'C’est ton propre code.':'Code introuvable : vérifie-le avec ton ami.'); }catch(e){ toast('Impossible de relier pour l’instant.'); } },
+  async duoSet(b){ const ch={id:b.dataset.c,wk:monday()}; try{ await SB.req('/rest/v1/elan_duo?a=eq.'+b.dataset.a+'&b=eq.'+b.dataset.b,{method:'PATCH',headers:{Prefer:'return=minimal'},body:{challenge:ch}}); DUO=null; render(); toast('Défi lancé pour la semaine !'); }catch(e){ toast('Impossible de lancer le défi.'); } },
+  async duoUnlink(b){ try{ await SB.req('/rest/v1/elan_duo?a=eq.'+b.dataset.a+'&b=eq.'+b.dataset.b,{method:'DELETE'}); DUO=null; render(); }catch(e){ toast('Impossible pour l’instant.'); } },
   setGoal(b){ const g=b.dataset.g; if(!GOALS[g]) return; D.s.goal=g; D.s.goalSet=true; save('s'); DAY_ID=''; const inSheet=!!b.closest('.sheet'); if(inSheet) closeSheet(); render(); toast('Objectif : '+GOALS[g].n+'. Ta semaine est adaptée.'); },
   goalSheet(){ openSheet(`<div class="between"><h2 class="title-l">Ton objectif</h2><button class="icon-btn glass" data-act="closeSheet" aria-label="Fermer">${svg('x',16)}</button></div><p class="sub">Ta semaine change selon l’objectif. L’intensité et le test « Où en es-tu ? » continuent de s’adapter à toi.</p>${goalPick()}`); },
   startMob(){ const z=MZ, d=MD; MZ='mobilite'; MD=1; const p=customSession(); MZ=z; MD=d; startPlayer(p,{k:'libre'}); },
@@ -1405,7 +1501,7 @@ const ACT={
   setDur(b){ MD=+b.dataset.n; LS.set('elan_md',String(MD)); render(); }, setZone(b){ MZ=b.dataset.id; LS.set('elan_mz',MZ); render(); },
   reroll(){ MSEED++; render(); }, startMesure(){ startPlayer(customSession(),{k:'libre'}); },
   exInfo(b){ const e=b.dataset.ex; if(!EX[e]) return; openSheet(exSheet(e)); figStart($('#sheet .fig'),e,STRETCH.has(e)?3200:1600); },
-  pgtab(b){ PG_TAB=b.dataset.id; LS.set('elan_pg',PG_TAB); render(); },
+  pgtab(b){ PG_TAB=b.dataset.id; LS.set('elan_pg',PG_TAB); if(VIEW!=='progres'){ location.hash='#progres'; return; } render(); },
   goAcct(){ if(VIEW!=='compte'){ location.hash='compte'; } setTimeout(()=>$('#acct')?.scrollIntoView({behavior:'smooth',block:'center'}),150); },
   async login(){ const m=$('#au_msg'), e=$('#au_email').value.trim(), pw=$('#au_pw').value; if(!e||!pw){ m.textContent='Entre ton e-mail et ton mot de passe.'; return; }
     m.textContent='Connexion…'; try{ await SB.login(e,pw); DIRTY=true; VER++; LS.set('elan_dirty','1'); LS.set('elan_pulled',''); startSupa(); render(); toast('Connecté. Synchro en cours…'); }catch(err){ m.textContent=authErr(err); } },
@@ -1431,13 +1527,13 @@ const ACT={
   async remind(){ const t=($('#remind_t')?.value||'18:30'); D.s.remind=t; save('s'); const [H,M]=t.split(':'); const d=new Date(); if(d.getHours()*60+d.getMinutes()>=(+H)*60+(+M)) d.setDate(d.getDate()+1);
     const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
     const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Elan//FR','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:elan-rappel-'+Date.now()+'@elan','DTSTAMP:'+stamp,'DTSTART:'+iso(d).replace(/-/g,'')+'T'+H+M+'00','DURATION:PT15M','RRULE:FREQ=DAILY',
-      'SUMMARY:Élan · ton Tabata du jour','DESCRIPTION:Quelques minutes suffisent pour garder ta série.','URL:https://lampadwair.github.io/elan/','BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Ton Tabata t’attend','TRIGGER:PT0M','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+      'SUMMARY:Hermes · ta séance du jour','DESCRIPTION:Quelques minutes suffisent pour garder ta série.','URL:https://lampadwair.github.io/elan/','BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Ton Tabata t’attend','TRIGGER:PT0M','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
     const blob=new Blob([ics],{type:'text/calendar'});
     if(window.claude){ try{ const dl=await claude.use('downloads'); if(!dl) throw 0; await dl.save({filename:'elan-rappel.ics',data:blob}); toast('Ouvre le fichier pour ajouter le rappel à ton calendrier.'); }catch(e){ if(!(e&&e.code==='cancelled')) toast('Fais-le plutôt depuis l’appli iPhone.'); } return; }
     const url=URL.createObjectURL(blob), a=document.createElement('a'); a.href=url; a.download='elan-rappel.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),60000);
     toast('Ajoute l’événement à ton calendrier : il sonnera chaque jour à '+t+'.'); },
   async shareList(){ const items=shopping(PLAN_OFF), wk=weekDays(PLAN_OFF)[0], rest=items.filter(i=>!D.r.checked[wk+'|'+i.key]); if(!rest.length){ toast('Tout est déjà coché.'); return; }
-    const text='Courses Élan (semaine du '+fmtDate(wk)+')\n'+AISLE_ORDER.map(a=>{ const L=rest.filter(i=>aisleOf(i.n)===a); return L.length?'\n'+a+'\n'+L.map(i=>'• '+i.n+(i.qty?' : '+i.qty:'')).join('\n'):''; }).join('');
+    const text='Courses Hermes (semaine du '+fmtDate(wk)+')\n'+AISLE_ORDER.map(a=>{ const L=rest.filter(i=>aisleOf(i.n)===a); return L.length?'\n'+a+'\n'+L.map(i=>'• '+i.n+(i.qty?' : '+i.qty:'')).join('\n'):''; }).join('');
     if(navigator.share&&!window.claude){ try{ await navigator.share({title:'Liste de courses',text}); return; }catch(e){ if(e&&e.name==='AbortError') return; } }
     try{ await navigator.clipboard.writeText(text); toast('Liste copiée : colle-la dans un message.'); }
     catch(e){ openSheet(`<div class="between"><h2 class="title-l">Liste de courses</h2><button class="icon-btn glass" data-act="closeSheet" aria-label="Fermer">${svg('x',16)}</button></div><textarea rows="12" readonly>${esc(text)}</textarea><p class="xs muted">Sélectionne le texte et copie-le.</p>`); } },
@@ -1477,7 +1573,7 @@ const ACT={
     const fallback=()=>{ ta.value=txt; ta.focus(); ta.select(); toast('Sélectionné : copie-le avec Copier.'); };
     try{ navigator.clipboard.writeText(txt).then(()=>toast('Données copiées. Colle-les dans l’autre version.'),fallback); }catch(e){ fallback(); } },
   pasteData(){ let o; try{ o=JSON.parse($('#xfer').value); }catch(e){ toast('Ces données ne sont pas lisibles. Recopie-les en entier.'); return; }
-    if(!o||o.app!=='elan'||!o.s||!o.r){ toast('Ce ne sont pas des données Élan.'); return; }
+    if(!o||o.app!=='elan'||!o.s||!o.r){ toast('Ce ne sont pas des données Hermes.'); return; }
     D.s=norm('s',o.s); D.r=norm('r',o.r); save('s'); save('r'); render(); toast('Données importées.'); },
 };
 document.addEventListener('click',e=>{
