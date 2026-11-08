@@ -1,7 +1,7 @@
 {
- "name": "Hermes",
- "short_name": "Hermes",
- "description": "Tabata quotidien, programme force au poids du corps et planning repas.",
+ "name": "Dromos",
+ "short_name": "Dromos",
+ "description": "Ta séance de sport du jour, au poids du corps, chez toi.",
  "lang": "fr",
  "start_url": "./",
  "scope": "./",

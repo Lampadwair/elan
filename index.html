@@ -1,17 +1,17 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-rImoTlEFn8xyp0TI9+UoMoE+QPjJ8Rn2Q6HVSHuOrrA='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-nZ5Q5NwHedDi8GeHn90ox3PwNx212xY5jnSR2RV6Fis='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Hermes">
+<meta name="apple-mobile-web-app-title" content="Dromos">
 <meta name="theme-color" content="#E9ECF1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0B0D12" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
-<title>Hermes</title>
+<title>Dromos</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -722,7 +722,7 @@ function byPosition(list){ const f=list.filter(e=>FLOOR.has(e)), u=list.filter(e
 const TCOL={tirage:'#0F9F73',skills:'#E81F70',cardio:'#F04A24',haut:'#2F6BFF',jambes:'#7A4DFF',abdos:'#0F9F73',full:'#E81F70',surprise:'#FFB000',mobilite:'#14B8C9'};
 const TON=id=>id==='surprise'||id==='mobilite'?'#121116':'#FFFFFF';
 const TSHORT={tirage:'Tirage',skills:'Skills',cardio:'Cardio',haut:'Haut',jambes:'Jambes',abdos:'Abdos',full:'Full',surprise:'Surprise',mobilite:'Mobilité'};
-/* Illustrations Hermes : un sportif en traits épais + décor, couleur du jour en fond */
+/* Illustrations Dromos : un sportif en traits épais + décor, couleur du jour en fond */
 const ILLU=(()=>{
   const L=(a,b,w,o)=>`<path d="M${a[0]} ${a[1]}L${b[0]} ${b[1]}" stroke-width="${w}" ${o?`opacity="${o}"`:''}/>`;
   const C=(a,b,c,w,o)=>`<path d="M${a[0]} ${a[1]}Q${b[0]} ${b[1]} ${c[0]} ${c[1]}" stroke-width="${w}" fill="none" ${o?`opacity="${o}"`:''}/>`;
@@ -773,7 +773,7 @@ const ILLU=(()=>{
     return `<svg viewBox="0 0 210 170" class="illu" aria-hidden="true">${s.d(acc)}${man(s.p,ink,shirt)}</svg>`; };
 })();
 const illuFor=id=>ILLU(id,'#121116',TON(id)==='#FFFFFF'?'rgba(255,255,255,.38)':'rgba(18,17,22,.16)',typeof shirtCol==='function'?shirtCol():'#FFFFFF');
-const APP_VER='hermes-v3';
+const APP_VER='dromos-v1';
 let NEW_VER=false, VER_AT=0;
 async function checkVersion(){ if(window.claude||APP_VER==='dev'||Date.now()-VER_AT<10*60000) return; VER_AT=Date.now(); try{ const r=await fetch('version.json',{cache:'no-store'}); const j=await r.json(); if(j&&j.v&&j.v!==APP_VER&&!NEW_VER){ NEW_VER=true; render(); } }catch(e){} }
 function verBanner(){ return NEW_VER?`<div class="verbar glass"><span class="small"><b>Nouvelle version disponible</b></span><button class="btn sm primary" data-act="reloadApp">Mettre à jour</button></div>`:''; }
@@ -1258,7 +1258,7 @@ async function monthImage(){ const M=monthStats(), W=1080,H=1350, c=document.cre
   const col=getComputedStyle(document.documentElement).getPropertyValue('--day').trim()||'#F04A24', on=getComputedStyle(document.documentElement).getPropertyValue('--on-day').trim()||'#fff';
   g.fillStyle=col; g.fillRect(0,0,W,H); g.save(); g.globalAlpha=.07; g.fillStyle='#000'; for(let x=-H;x<W;x+=88){ g.beginPath(); g.moveTo(x,H); g.lineTo(x+44,H); g.lineTo(x+44+H*.7,0); g.lineTo(x+H*.7,0); g.fill(); } g.restore();
   try{ await document.fonts.load('120px Anton'); }catch(e){}
-  g.fillStyle=on; g.font='700 44px Figtree, system-ui, sans-serif'; g.fillText('HERMES · '+MOIS_L[+M.m.slice(5)-1].toUpperCase()+' '+M.m.slice(0,4),80,130);
+  g.fillStyle=on; g.font='700 44px Figtree, system-ui, sans-serif'; g.fillText('DROMOS · '+MOIS_L[+M.m.slice(5)-1].toUpperCase()+' '+M.m.slice(0,4),80,130);
   g.font='170px Anton, Impact, sans-serif'; g.fillText('MON MOIS',72,330);
   const rows=[[M.days,'jours actifs'],[M.min,'minutes d’effort'],[fr(M.kcal),'kcal brûlées'],[M.best,'jours de série (record)']];
   rows.forEach(([v,l],i)=>{ const y=520+i*190; g.font='150px Anton, Impact, sans-serif'; g.fillText(String(v),80,y); g.font='600 46px Figtree, system-ui, sans-serif'; g.fillText(l,80,y+62); });
@@ -1655,7 +1655,7 @@ const ACT={
   doCh(b){ const c=CHALL.find(x=>x.id===b.dataset.id), st=chState(c); if(!st) return; const ch=D.s.challenges[c.id]; ch.done=st.doneToday?ch.done.filter(d=>d!==st.day):[...ch.done,st.day]; save('s'); render(); if(!st.doneToday) toast(st.day===30?'Défi terminé, bravo !':'Jour '+st.day+' validé.'); },
   dinnerTonight(b){ D.r.plan[iso()+'|s']={r:b.dataset.id,p:1}; prunePlan(); save('r'); render(); toast('Ajouté au dîner de ce soir.'); },
   suggestWeek(){ const n=suggestWeek(); save('r'); render(); toast(n?n+' repas proposés, avec des restes pour cuisiner moins.':'Ta semaine est déjà remplie : vide-la d’abord.'); },
-  async shareWeek(){ const R=recapText(); const text=`Ma semaine sur Hermes : ${R.cur.days} jours actifs, ${R.cur.min} min d’effort, ${fr(R.cur.kc)} kcal brûlées. Série en cours : ${dayStreak()} jours.`;
+  async shareWeek(){ const R=recapText(); const text=`Ma semaine sur Dromos : ${R.cur.days} jours actifs, ${R.cur.min} min d’effort, ${fr(R.cur.kc)} kcal brûlées. Série en cours : ${dayStreak()} jours.`;
     if(navigator.share&&!window.claude){ try{ await navigator.share({text}); return; }catch(e){ if(e&&e.name==='AbortError') return; } }
     try{ await navigator.clipboard.writeText(text); toast('Copié : colle-le dans un message.'); }catch(e){ toast(text); } },
   toggleQuiet(){ D.s.quiet=!D.s.quiet; save('s'); render(); },
@@ -1663,7 +1663,7 @@ const ACT={
   async enablePush(){ const m=$('#pushMsg'); const say=t=>{ if(m) m.textContent=t; };
     if(MODE!=='supa'){ say('Connecte-toi d’abord à la synchro.'); return; }
     if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)){ say('Sur iPhone, ajoute d’abord l’appli à l’écran d’accueil (Safari → Partager → Sur l’écran d’accueil), puis ouvre-la depuis son icône.'); return; }
-    try{ const perm=await Notification.requestPermission(); if(perm!=='granted'){ say('Notifications refusées. Tu peux les autoriser dans les réglages de l’iPhone → Notifications → Hermes.'); return; }
+    try{ const perm=await Notification.requestPermission(); if(perm!=='granted'){ say('Notifications refusées. Tu peux les autoriser dans les réglages de l’iPhone → Notifications → Dromos.'); return; }
       say('Activation…'); const k=await fetch(FN+'?key=1',{headers:{apikey:SUPA.key}}).then(r=>r.json()); const reg=await navigator.serviceWorker.ready;
       const sub=(await reg.pushManager.getSubscription())||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(k.pub)});
       await savePushRow(sub); D.s.pushOn=true; save('s'); render(); toast('Notifications activées.'); }
@@ -1672,8 +1672,8 @@ const ACT={
       const r=await fetch(FN,{method:'POST',headers:{apikey:SUPA.key,'Content-Type':'application/json'},body:JSON.stringify({test:sub.endpoint})}).then(r=>r.json());
       if(m) m.textContent=r&&r.sent?'Notification envoyée : elle arrive dans quelques secondes.':'Envoi impossible pour le moment.'; }catch(e){ if(m) m.textContent='Envoi impossible pour le moment.'; } },
   async disablePush(){ try{ const sub=await pushSub(); if(sub){ await SB.req('/rest/v1/elan_push?endpoint=eq.'+encodeURIComponent(sub.endpoint),{method:'DELETE'}).catch(()=>{}); await sub.unsubscribe(); } }catch(e){} D.s.pushOn=false; save('s'); render(); toast('Notifications désactivées sur cet appareil.'); },
-  async shareMonth(){ try{ const blob=await monthImage(), name='hermes-mois-'+iso().slice(0,7)+'.png', file=new File([blob],name,{type:'image/png'});
-      if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:'Mon mois sur Hermes'}); return; }
+  async shareMonth(){ try{ const blob=await monthImage(), name='dromos-mois-'+iso().slice(0,7)+'.png', file=new File([blob],name,{type:'image/png'});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:'Mon mois sur Dromos'}); return; }
       if(window.claude){ const dl=await claude.use('downloads'); if(dl){ await dl.save({filename:name,data:blob}); return; } }
       const url=URL.createObjectURL(blob), a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); }catch(e){ if(e&&e.name!=='AbortError') toast('Partage impossible.'); } },
   async reloadApp(){ try{ const r=await navigator.serviceWorker?.getRegistration(); if(r){ await r.update(); r.waiting?.postMessage('skip'); } }catch(e){} location.reload(); },
@@ -1684,7 +1684,7 @@ const ACT={
   setShirt(b){ D.s.shirt=+b.dataset.i; save('s'); render(); },
   startMin3(){ const p=min3Session(); startPlayer(p,{k:'min3',sk:'tabata'}); },
   wkAdd(){ const c=wkChallenge(); if(!c||c.auto) return; D.s.wkc=D.s.wkc||{}; const st=D.s.wkc[c.m]||{p:0}; st.p=Math.min(c.t,(st.p||0)+c.st); st.done=st.p>=c.t; D.s.wkc[c.m]=st; save('s'); render(); if(st.done) toast('Défi du week-end réussi !'); },
-  async downloadBackup(){ const txt=JSON.stringify({app:'elan',v:1,d:iso(),s:D.s,r:D.r}), name='hermes-sauvegarde-'+iso()+'.json', blob=new Blob([txt],{type:'application/json'});
+  async downloadBackup(){ const txt=JSON.stringify({app:'elan',v:1,d:iso(),s:D.s,r:D.r}), name='dromos-sauvegarde-'+iso()+'.json', blob=new Blob([txt],{type:'application/json'});
     if(window.claude){ try{ const dl=await claude.use('downloads'); if(dl){ await dl.save({filename:name,data:blob}); return; } }catch(e){} }
     const url=URL.createObjectURL(blob), a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); },
   async restoreSnap(b){ try{ const x=await idb('snapGet',b.dataset.d); if(!x) return; D.s=norm('s',x.s); D.r=norm('r',x.r); save('s'); save('r'); render(); toast('Sauvegarde du '+fmtDate(x.d)+' restaurée.'); }catch(e){ toast('Restauration impossible.'); } },
@@ -1727,13 +1727,13 @@ const ACT={
   async remind(){ const t=($('#remind_t')?.value||'18:30'); D.s.remind=t; save('s'); const [H,M]=t.split(':'); const d=new Date(); if(d.getHours()*60+d.getMinutes()>=(+H)*60+(+M)) d.setDate(d.getDate()+1);
     const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
     const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Elan//FR','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:elan-rappel-'+Date.now()+'@elan','DTSTAMP:'+stamp,'DTSTART:'+iso(d).replace(/-/g,'')+'T'+H+M+'00','DURATION:PT15M','RRULE:FREQ=DAILY',
-      'SUMMARY:Hermes · ta séance du jour','DESCRIPTION:Quelques minutes suffisent pour garder ta série.','URL:https://lampadwair.github.io/elan/','BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Ton Tabata t’attend','TRIGGER:PT0M','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+      'SUMMARY:Dromos · ta séance du jour','DESCRIPTION:Quelques minutes suffisent pour garder ta série.','URL:https://lampadwair.github.io/elan/','BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Ton Tabata t’attend','TRIGGER:PT0M','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
     const blob=new Blob([ics],{type:'text/calendar'});
     if(window.claude){ try{ const dl=await claude.use('downloads'); if(!dl) throw 0; await dl.save({filename:'elan-rappel.ics',data:blob}); toast('Ouvre le fichier pour ajouter le rappel à ton calendrier.'); }catch(e){ if(!(e&&e.code==='cancelled')) toast('Fais-le plutôt depuis l’appli iPhone.'); } return; }
     const url=URL.createObjectURL(blob), a=document.createElement('a'); a.href=url; a.download='elan-rappel.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),60000);
     toast('Ajoute l’événement à ton calendrier : il sonnera chaque jour à '+t+'.'); },
   async shareList(){ const items=shopping(PLAN_OFF), wk=weekDays(PLAN_OFF)[0], rest=items.filter(i=>!D.r.checked[wk+'|'+i.key]); if(!rest.length){ toast('Tout est déjà coché.'); return; }
-    const text='Courses Hermes (semaine du '+fmtDate(wk)+')\n'+AISLE_ORDER.map(a=>{ const L=rest.filter(i=>aisleOf(i.n)===a); return L.length?'\n'+a+'\n'+L.map(i=>'• '+i.n+(i.qty?' : '+i.qty:'')).join('\n'):''; }).join('');
+    const text='Courses Dromos (semaine du '+fmtDate(wk)+')\n'+AISLE_ORDER.map(a=>{ const L=rest.filter(i=>aisleOf(i.n)===a); return L.length?'\n'+a+'\n'+L.map(i=>'• '+i.n+(i.qty?' : '+i.qty:'')).join('\n'):''; }).join('');
     if(navigator.share&&!window.claude){ try{ await navigator.share({title:'Liste de courses',text}); return; }catch(e){ if(e&&e.name==='AbortError') return; } }
     try{ await navigator.clipboard.writeText(text); toast('Liste copiée : colle-la dans un message.'); }
     catch(e){ openSheet(`<div class="between"><h2 class="title-l">Liste de courses</h2><button class="icon-btn glass" data-act="closeSheet" aria-label="Fermer">${svg('x',16)}</button></div><textarea rows="12" readonly>${esc(text)}</textarea><p class="xs muted">Sélectionne le texte et copie-le.</p>`); } },
@@ -1777,7 +1777,7 @@ const ACT={
     const fallback=()=>{ ta.value=txt; ta.focus(); ta.select(); toast('Sélectionné : copie-le avec Copier.'); };
     try{ navigator.clipboard.writeText(txt).then(()=>toast('Données copiées. Colle-les dans l’autre version.'),fallback); }catch(e){ fallback(); } },
   pasteData(){ let o; try{ o=JSON.parse($('#xfer').value); }catch(e){ toast('Ces données ne sont pas lisibles. Recopie-les en entier.'); return; }
-    if(!o||o.app!=='elan'||!o.s||!o.r){ toast('Ce ne sont pas des données Hermes.'); return; }
+    if(!o||o.app!=='elan'||!o.s||!o.r){ toast('Ce ne sont pas des données Dromos.'); return; }
     D.s=norm('s',o.s); D.r=norm('r',o.r); save('s'); save('r'); render(); toast('Données importées.'); },
 };
 document.addEventListener('click',e=>{
