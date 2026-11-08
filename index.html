@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-+g4p938bOII0pNf/qcg/xAht4SLiabEYX90oRSjPVN8='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-AvYjSCTka4n9vOJ/ab1Nu/Ke0akMomQw5gD7H0o8agM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
@@ -323,6 +323,9 @@ details.card>summary::-webkit-details-marker{display:none}
 .wk7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center;font-size:.7rem;font-weight:700;color:var(--muted)}
 .wk7 div{display:flex;flex-direction:column;align-items:center;gap:5px}
 .wk7 span{width:100%;max-width:36px;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:800}
+.swapl{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.swapl button{display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;border-radius:16px;background:var(--glass-strong);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.swapl i{width:14px;height:14px;border-radius:50%;flex:none} .swapl span{flex:1;display:flex;flex-direction:column} .swapl small{color:var(--muted);font-size:.8rem}
 .todo{list-style:none;margin:0;padding:0}
 .todo li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--track)}
 .todo li:last-child{border-bottom:0}
@@ -424,7 +427,7 @@ const BASE_RECIPES=[
  {id:'b7',name:'Dahl de lentilles corail',portions:3,time:30,kcal:625,tags:['végétarien','batch cooking'],ing:['250 g lentilles corail','200 ml lait de coco','400 g tomates concassées','1 oignon','150 g riz','1 c. à soupe curry'],steps:'Faire revenir l’oignon avec le curry.\nAjouter lentilles, tomates, lait de coco et 400 ml d’eau. Cuire 20 min.\nServir avec le riz.'},
  {id:'b8',name:'Smoothie banane-avoine',portions:1,time:5,kcal:615,tags:['collation','sans cuisson'],ing:['300 ml lait entier','1 banane','40 g flocons d’avoine','1 c. à soupe beurre de cacahuète','100 g fromage blanc'],steps:'Tout mixer 1 minute.\nIdéal après la séance.'},
 ];
-const DEF_S={name:'Simon',quiet:false,theme:'auto',pushOn:false,favSess:[],challenges:{},measures:[],remind:'18:30',keepMusic:true,tempo:false,best:0,level:null,tests:[],sessions:[],weights:[],adj:0,cycleStart:0,cycle:1,why:'',voice:true,seenFmt:[],goal:'mix',wkc:{},duoDone:{},offDays:[],zones:[],remindAuto:false,shirt:0,qDone:{},tierHist:[],posture:{},postureRem:0,postureLast:0};
+const DEF_S={name:'Simon',quiet:false,theme:'auto',pushOn:false,favSess:[],challenges:{},measures:[],remind:'18:30',keepMusic:true,tempo:false,best:0,level:null,tests:[],sessions:[],weights:[],adj:0,cycleStart:0,cycle:1,why:'',voice:true,seenFmt:[],goal:'mix',wkc:{},duoDone:{},offDays:[],zones:[],remindAuto:false,shirt:0,qDone:{},tierHist:[],swaps:{},posture:{},postureRem:0,postureLast:0};
 const CATS=[['plat','Plats'],['petitdej','Petits-déj'],['collation','Collations'],['dessert','Desserts']];
 const BASE_CAT={b3:'petitdej',b8:'collation'}; BASE_RECIPES.forEach(r=>r.cat=BASE_CAT[r.id]||'plat');
 const recipeCat=r=>r.cat||((r.tags||[]).some(t=>/petit/i.test(t))?'petitdej':(r.tags||[]).some(t=>/collation|snack/i.test(t))?'collation':'plat');
@@ -604,6 +607,7 @@ function norm(k,d){ const o=Object.assign(clone(k==='s'?DEF_S:DEF_R),scrub(d&&ty
     o.weights=arr(o.weights).filter(w=>ISOD.test(w.d)).map(w=>({...w,kg:N0(w.kg)}));
     o.measures=arr(o.measures).filter(m=>ISOD.test(m.d)).map(m=>{ const r={d:m.d}; for(const [kk,vv] of Object.entries(m)) if(kk!=='d') r[kk]=vv==null?null:N0(vv); return r; });
     o.posture=o.posture&&typeof o.posture==='object'&&!Array.isArray(o.posture)?Object.fromEntries(Object.entries(o.posture).filter(([d])=>ISOD.test(d)).map(([d,v])=>[d,N0(v)])):{};
+    o.swaps=o.swaps&&typeof o.swaps==='object'&&!Array.isArray(o.swaps)?Object.fromEntries(Object.entries(o.swaps).filter(([d,v])=>ISOD.test(d)&&Array.isArray(v)&&v.length===7&&[...v].map(Number).sort().join()==='0,1,2,3,4,5,6').map(([d,v])=>[d,v.map(Number)])):{};
     o.sessions=arr(o.sessions); ['postureRem','postureLast','tier','tierPts','level','cycle','cycleStart','best','adj'].forEach(f=>{ if(o[f]!=null) o[f]=N0(o[f]); }); }
   return o; }
 function setSync(s){ SYNC=s; const el=$('#sync'); if(el){ el.className='sync '+(s==='ok'?'ok':s==='err'?'err':''); el.lastChild.textContent=SYNC_TXT[s]||''; } }
@@ -707,7 +711,9 @@ const WEEKS={
   mix:[{id:'cardio',n:'Cardio',f:'tabata'},{id:'haut',n:'Haut du corps',f:'tabata'},{id:'jambes',n:'Jambes',f:'tabata'},{id:'abdos',n:'Abdos et gainage',f:'tabata'},{id:'full',n:'Full body',f:'tabata'},{id:'surprise',n:'Format surprise',f:'surprise'},{id:'mobilite',n:'Mobilité',f:'mobilite'}],
   poids:[{id:'cardio',n:'Cardio',f:'tabata'},{id:'full',n:'Full body',f:'circuit'},{id:'cardio',n:'Cardio HIIT',f:'hiit'},{id:'haut',n:'Haut du corps',f:'tabata'},{id:'cardio',n:'Cardio',f:'tabata'},{id:'surprise',n:'Format surprise',f:'surprise'},{id:'mobilite',n:'Mobilité',f:'mobilite',walk:true}],
   muscle:[{id:'haut',n:'Poussée',f:'cali',c:'push'},{id:'jambes',n:'Jambes',f:'cali',c:'legs'},{id:'tirage',n:'Tirage et gainage',f:'cali',c:'pull'},{id:'cardio',n:'Cardio court',f:'cardio_court'},{id:'haut',n:'Poussée',f:'cali',c:'push'},{id:'skills',n:'Skills',f:'cali',c:'skills'},{id:'mobilite',n:'Mobilité',f:'mobilite'}]};
-function weekPlan(){ return WEEKS[goal()].map(d=>({...d,pool:(THEMES.find(t=>t.id===(d.id==='tirage'||d.id==='skills'?'full':d.id))||THEMES[4]).pool})); }
+// Échange de jours : D.s.swaps = {lundi: permutation des 7 jours}, valable seulement pour la semaine en cours
+function weekPerm(){ const p=(D.s.swaps||{})[monday()]; return Array.isArray(p)&&p.length===7?p:[0,1,2,3,4,5,6]; }
+function weekPlan(){ const base=WEEKS[goal()]; return weekPerm().map(i=>base[i]).map(d=>({...d,pool:(THEMES.find(t=>t.id===(d.id==='tirage'||d.id==='skills'?'full':d.id))||THEMES[4]).pool})); }
 // calisthénie : chaque exercice monte d'une variante tous les deux paliers
 const CALI={
   push:[{l:['pompes_inclinees','pompes_genoux','pompes','pompes_declinees','pompes_archer'],r:[8,12]},{l:['pompes_genoux','pike','pike','pike','pike'],r:[6,10]},{l:['dips','dips','dips','dips','dips'],r:[6,12]},{l:['planche_genoux','planche','planche','planche_touch','planche_touch'],s:[20,45],r2:[10,16]}],
@@ -783,7 +789,7 @@ const ILLU=(()=>{
     return `<svg viewBox="0 0 210 170" class="illu" aria-hidden="true">${s.d(acc)}${man(s.p,ink,shirt)}</svg>`; };
 })();
 const illuFor=id=>ILLU(id,'#121116',TON(id)==='#FFFFFF'?'rgba(255,255,255,.38)':'rgba(18,17,22,.16)',typeof shirtCol==='function'?shirtCol():'#FFFFFF');
-const APP_VER='dromos-v2';
+const APP_VER='dromos-v3';
 let NEW_VER=false, VER_AT=0;
 async function checkVersion(){ if(window.claude||APP_VER==='dev'||Date.now()-VER_AT<10*60000) return; VER_AT=Date.now(); try{ const r=await fetch('version.json',{cache:'no-store'}); const j=await r.json(); if(j&&j.v&&j.v!==APP_VER&&!NEW_VER){ NEW_VER=true; render(); } }catch(e){} }
 function verBanner(){ return NEW_VER?`<div class="verbar glass"><span class="small"><b>Nouvelle version disponible</b></span><button class="btn sm primary" data-act="reloadApp">Mettre à jour</button></div>`:''; }
@@ -853,6 +859,8 @@ function postureCard(){ const v=+D.s.postureRem||0, notif=!window.claude&&'Notif
     ${v&&notif&&Notification.permission==='default'?`<div class="row" style="margin-top:10px"><button class="btn sm" data-act="postureNotif">Autoriser les notifications</button><span class="xs muted">pour être prévenu quand Dromos est en arrière-plan</span></div>`:''}
     ${v&&notif&&Notification.permission==='denied'?`<p class="xs muted" style="margin-top:8px">Notifications bloquées dans le navigateur : le rappel s’affichera seulement quand Dromos est à l’écran.</p>`:''}
     <p class="xs muted" style="margin-top:8px">Cette semaine : ${postureWeek()} pause${postureWeek()>1?'s':''}.</p></section>`; }
+function swapTargets(){ const t=dow(), m=monday(), wp=weekPlan(); if(D.s.sessions.some(x=>x.d===iso()&&x.k==='T')) return [];
+  const out=[]; for(let j=t+1;j<7;j++){ if(isOff(addDays(m,j))||wp[j].id===wp[t].id&&wp[j].f===wp[t].f) continue; out.push(j); } return out; }
 function miniSession0(){ const p=dailyTabata0({short:true}); return {...p,k:'mini',title:'Version courte · '+p.title}; }
 function tierText(t){ const [w,r]=tierWork(t); return `${tierBlocks(t)} bloc${tierBlocks(t)>1?'s':''} de ${tierRounds(t)} rounds ${w}/${r} s, exercices ${['faciles','intermédiaires','avancés'][tierDiff(t)-1]}`; }
 function tierUnlock(t){ if(t>=10) return 'Intensité maximale atteinte : le défi, c’est de la garder.';
@@ -1012,7 +1020,7 @@ function vToday(){
        <div class="chips">${exNames(tb).slice(0,6).map(e=>`<button class="pill" data-act="exInfo" data-ex="${e}">${EX[e].n}</button>`).join('')}</div>
        <button class="go" data-act="startDaily">${svg('play',18)}C’est parti</button>
        <div style="display:flex;flex-direction:column;gap:6px"><div class="between xs" style="font-weight:700"><span>Intensité ${tb.tier}/10</span><span>${tb.tier>=10?'maximum':'prochain palier dans '+left+' séance'+(left>1?'s':'')}</span></div><div class="hbar"><i style="width:${pct}%"></i></div></div>
-       <div style="text-align:center"><span style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px"><button class="hlink" data-act="brief">Voir le déroulé</button><button class="hlink" data-act="startMini">Version courte</button><button class="hlink" data-act="startMin3">3 min</button></span></div></section>`;
+       <div style="text-align:center"><span style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px"><button class="hlink" data-act="brief">Voir le déroulé</button><button class="hlink" data-act="startMini">Version courte</button><button class="hlink" data-act="startMin3">3 min</button>${swapTargets().length?'<button class="hlink" data-act="swapSheet">Changer de jour</button>':''}</span></div></section>`;
   const todo=[];
   const wch=wkChallenge(); if(wch) todo.push(wkItem(wch));
   const duoLine=duoTodo(); if(duoLine) todo.push(duoLine);
@@ -1735,6 +1743,14 @@ const ACT={
   async duoUnlink(b){ try{ await SB.req('/rest/v1/elan_duo?a=eq.'+b.dataset.a+'&b=eq.'+b.dataset.b,{method:'DELETE'}); DUO=null; render(); }catch(e){ toast('Impossible pour l’instant.'); } },
   setGoal(b){ const g=b.dataset.g; if(!GOALS[g]) return; D.s.goal=g; D.s.goalSet=true; save('s'); DAY_ID=''; const inSheet=!!b.closest('.sheet'); if(inSheet) closeSheet(); render(); toast('Objectif : '+GOALS[g].n+'. Ta semaine est adaptée.'); },
   goalSheet(){ openSheet(`<div class="between"><h2 class="title-l">Ton objectif</h2><button class="icon-btn glass" data-act="closeSheet" aria-label="Fermer">${svg('x',16)}</button></div><p class="sub">Ta semaine change selon l’objectif. L’intensité et le test « Où en es-tu ? » continuent de s’adapter à toi.</p>${goalPick()}`); },
+  swapSheet(){ const wp=weekPlan(), t=dow(), js=swapTargets(), sw=weekPerm().some((x,i)=>x!==i);
+    openSheet(`<div class="between"><h2 class="title-l">Changer de jour</h2><button class="icon-btn glass" data-act="closeSheet" aria-label="Fermer">${svg('x',16)}</button></div>
+    <p class="sub">Aujourd’hui, c’est <b>${esc(wp[t].n)}</b>. Choisis la séance que tu préfères faire : les deux jours sont échangés pour cette semaine.</p>
+    <div class="swapl">${js.map(j=>`<button data-act="swapDay" data-j="${j}"><i style="background:${TCOL[wp[j].id]}"></i><span><b>${esc(wp[j].n)}</b><small>prévu ${JOURS[j].toLowerCase()}</small></span>${svg('swap',16)}</button>`).join('')}</div>
+    ${sw?`<button class="hlink" style="margin-top:14px" data-act="swapReset">Remettre la semaine prévue</button>`:''}`); },
+  swapDay(b){ const j=+b.dataset.j, t=dow(), m=monday(), p=[...weekPerm()], wp=weekPlan(); if(!(j>t&&j<7)) return; [p[t],p[j]]=[p[j],p[t]];
+    D.s.swaps={[m]:p}; save('s'); closeSheet(); render(); toast(`${wp[j].n} aujourd’hui. ${wp[t].n} passe à ${JOURS[j].toLowerCase()}.`); },
+  swapReset(){ D.s.swaps={}; save('s'); closeSheet(); render(); toast('Semaine remise comme prévu.'); },
   startPosture(){ startPlayer(postureSession(),{k:'posture'}); },
   setPostureRem(b){ D.s.postureRem=+b.dataset.n; POSTURE_T0=Date.now(); save('s'); render(); },
   postureNotif(){ try{ Notification.requestPermission().then(()=>render()); }catch(e){} },
