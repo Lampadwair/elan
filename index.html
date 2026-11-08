@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-nZ5Q5NwHedDi8GeHn90ox3PwNx212xY5jnSR2RV6Fis='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-+g4p938bOII0pNf/qcg/xAht4SLiabEYX90oRSjPVN8='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
@@ -395,6 +395,13 @@ const EX={
  rot_bras:{n:'Rotations des bras',c:'Grands cercles vers l’avant puis vers l’arrière, épaules relâchées.'},
  chat_vache:{n:'Chat-vache',c:'À quatre pattes, alterne dos rond et dos creux en respirant.'},
  cercles_hanches:{n:'Cercles de hanches',c:'Mains sur les hanches, grands cercles dans les deux sens.'},
+ omoplates:{n:'Omoplates serrées',c:'Debout, mains jointes derrière le dos, bras tendus. Rapproche les omoplates et descends-les vers le bas, poitrine ouverte, menton rentré. Tiens 5 s, relâche, recommence.'},
+ menton:{n:'Rentrée du menton',c:'Dos droit, regard à l’horizontale : recule la tête comme pour faire un double menton, sans la baisser. Tiens 2 s, relâche, recommence.'},
+ w_assis:{n:'W des épaules',c:'Coudes pliés, mains à hauteur des oreilles. Descends les coudes vers les poches arrière en serrant les omoplates, puis remonte doucement.'},
+ rot_assise:{n:'Rotation du buste',c:'Assis au bord de la chaise, bras croisés sur la poitrine. Tourne le buste d’un côté puis de l’autre, bassin immobile, en grandissant le dos.'},
+ etir_cou:{n:'Étirement du cou',c:'Épaules basses, penche l’oreille vers l’épaule sans la lever. La main du même côté peut appuyer très doucement. Change à mi-temps.'},
+ ext_chaise:{n:'Extension du haut du dos',c:'Mains derrière la tête, coudes ouverts. Penche le haut du dos en arrière par-dessus le dossier de la chaise (ou debout), puis reviens. Respire profondément.'},
+ hanche_debout:{n:'Ouverture de hanche',c:'Grand pas en avant, genou arrière tendu. Serre les fesses, avance le bassin et monte les bras vers le ciel. Change à mi-temps.'},
  etir_pecs:{n:'Étirement pectoraux',c:'Avant-bras contre un cadre de porte, avance doucement le buste. Change à mi-temps.'},
  etir_quadri:{n:'Étirement quadriceps',c:'Debout, attrape ta cheville et ramène le talon vers la fesse. Change à mi-temps.'},
  etir_ischios:{n:'Étirement ischios',c:'Jambes tendues, penche-toi vers les pieds sans forcer, dos long.'},
@@ -417,7 +424,7 @@ const BASE_RECIPES=[
  {id:'b7',name:'Dahl de lentilles corail',portions:3,time:30,kcal:625,tags:['végétarien','batch cooking'],ing:['250 g lentilles corail','200 ml lait de coco','400 g tomates concassées','1 oignon','150 g riz','1 c. à soupe curry'],steps:'Faire revenir l’oignon avec le curry.\nAjouter lentilles, tomates, lait de coco et 400 ml d’eau. Cuire 20 min.\nServir avec le riz.'},
  {id:'b8',name:'Smoothie banane-avoine',portions:1,time:5,kcal:615,tags:['collation','sans cuisson'],ing:['300 ml lait entier','1 banane','40 g flocons d’avoine','1 c. à soupe beurre de cacahuète','100 g fromage blanc'],steps:'Tout mixer 1 minute.\nIdéal après la séance.'},
 ];
-const DEF_S={name:'Simon',quiet:false,theme:'auto',pushOn:false,favSess:[],challenges:{},measures:[],remind:'18:30',keepMusic:true,tempo:false,best:0,level:null,tests:[],sessions:[],weights:[],adj:0,cycleStart:0,cycle:1,why:'',voice:true,seenFmt:[],goal:'mix',wkc:{},duoDone:{},offDays:[],zones:[],remindAuto:false,shirt:0,qDone:{},tierHist:[]};
+const DEF_S={name:'Simon',quiet:false,theme:'auto',pushOn:false,favSess:[],challenges:{},measures:[],remind:'18:30',keepMusic:true,tempo:false,best:0,level:null,tests:[],sessions:[],weights:[],adj:0,cycleStart:0,cycle:1,why:'',voice:true,seenFmt:[],goal:'mix',wkc:{},duoDone:{},offDays:[],zones:[],remindAuto:false,shirt:0,qDone:{},tierHist:[],posture:{},postureRem:0,postureLast:0};
 const CATS=[['plat','Plats'],['petitdej','Petits-déj'],['collation','Collations'],['dessert','Desserts']];
 const BASE_CAT={b3:'petitdej',b8:'collation'}; BASE_RECIPES.forEach(r=>r.cat=BASE_CAT[r.id]||'plat');
 const recipeCat=r=>r.cat||((r.tags||[]).some(t=>/petit/i.test(t))?'petitdej':(r.tags||[]).some(t=>/collation|snack/i.test(t))?'collation':'plat');
@@ -486,6 +493,8 @@ function mergeData(loc,rem){
   const s=Object.assign({},rem.s,loc.s), byD=(a,b)=>String(a.d).localeCompare(String(b.d));
   s.sessions=uniq(loc.s.sessions,rem.s.sessions,x=>x.t+'|'+x.d).sort((a,b)=>(a.t||0)-(b.t||0));
   s.tests=uniq(loc.s.tests,rem.s.tests,x=>x.d+'|'+x.pu).sort(byD); s.weights=uniq(loc.s.weights,rem.s.weights,x=>x.d).sort(byD); s.measures=uniq(loc.s.measures,rem.s.measures,x=>x.d).sort(byD);
+  s.posture=Object.assign({},rem.s.posture,loc.s.posture); for(const d in rem.s.posture||{}) s.posture[d]=Math.max(+(rem.s.posture[d])||0,+((loc.s.posture||{})[d])||0);
+  s.postureLast=Math.max(loc.s.postureLast||0,rem.s.postureLast||0);
   s.best=Math.max(loc.s.best||0,rem.s.best||0); s.level=loc.s.level||rem.s.level; s.cycle=Math.max(loc.s.cycle||1,rem.s.cycle||1); s.cycleStart=Math.max(loc.s.cycleStart||0,rem.s.cycleStart||0);
   const r=Object.assign({},rem.r,loc.r);
   r.recipes=uniq(loc.r.recipes,rem.r.recipes,x=>x.id); r.favs=[...new Set([...(rem.r.favs||[]),...(loc.r.favs||[])])];
@@ -594,7 +603,8 @@ function norm(k,d){ const o=Object.assign(clone(k==='s'?DEF_S:DEF_R),scrub(d&&ty
     o.tests=arr(o.tests).filter(t=>ISOD.test(t.d)).map(t=>({d:t.d,pu:N0(t.pu),sq:N0(t.sq),pl:N0(t.pl)}));
     o.weights=arr(o.weights).filter(w=>ISOD.test(w.d)).map(w=>({...w,kg:N0(w.kg)}));
     o.measures=arr(o.measures).filter(m=>ISOD.test(m.d)).map(m=>{ const r={d:m.d}; for(const [kk,vv] of Object.entries(m)) if(kk!=='d') r[kk]=vv==null?null:N0(vv); return r; });
-    o.sessions=arr(o.sessions); ['tier','tierPts','level','cycle','cycleStart','best','adj'].forEach(f=>{ if(o[f]!=null) o[f]=N0(o[f]); }); }
+    o.posture=o.posture&&typeof o.posture==='object'&&!Array.isArray(o.posture)?Object.fromEntries(Object.entries(o.posture).filter(([d])=>ISOD.test(d)).map(([d,v])=>[d,N0(v)])):{};
+    o.sessions=arr(o.sessions); ['postureRem','postureLast','tier','tierPts','level','cycle','cycleStart','best','adj'].forEach(f=>{ if(o[f]!=null) o[f]=N0(o[f]); }); }
   return o; }
 function setSync(s){ SYNC=s; const el=$('#sync'); if(el){ el.className='sync '+(s==='ok'?'ok':s==='err'?'err':''); el.lastChild.textContent=SYNC_TXT[s]||''; } }
 const SYNC_TXT={ok:'Synchronisé',wait:'Synchronisation…',slow:'Données pas encore accessibles',err:'Synchro en échec, nouvel essai bientôt',local:'Sur cet appareil',nosync:'Sur cet appareil · synchro non activée',offline:'Hors ligne · gardé sur l’appareil'};
@@ -641,7 +651,7 @@ const BODYZ={poignets:{n:'Poignets',ex:['pompes_inclinees','pompes_genoux','pomp
   dos:{n:'Dos',ex:['superman','burpee','squat_saute','crunch_velo','hollow']}};
 const exBad=e=>(D.s.zones||[]).some(z=>BODYZ[z]&&BODYZ[z].ex.includes(e));
 const SAFE=['squat','pont','planche','crunch_velo','boxe','jj','mollets','superman','squat_chaise','planche_genoux','rowing','face_pull'];
-function altFor(e,avoid=[]){ const pools=THEMES.filter(t=>t.pool.includes(e)).map(t=>t.pool), cand=[...new Set([...pools.flat(),...SAFE])].filter(x=>x!==e&&EX[x]&&!avoid.includes(x)&&!exBad(x)&&!(D.s.quiet&&QUIET[x])&&(DIFF[x]||1)<=Math.max(DIFF[e]||1,1));
+function altFor(e,avoid=[]){ if(POSTURE.includes(e)) return POSTURE.find(x=>x!==e&&!avoid.includes(x))||null; const pools=THEMES.filter(t=>t.pool.includes(e)).map(t=>t.pool), cand=[...new Set([...pools.flat(),...SAFE])].filter(x=>x!==e&&EX[x]&&!avoid.includes(x)&&!exBad(x)&&!(D.s.quiet&&QUIET[x])&&(DIFF[x]||1)<=Math.max(DIFF[e]||1,1));
   const same=cand.filter(x=>FLOOR.has(x)===FLOOR.has(e)); return (same.length?same:cand)[0]||null; }
 const qx=e=>{ let x=D.s.quiet&&QUIET[e]?QUIET[e]:e; if(exBad(x)) x=altFor(x)||x; return x; };
 function qp(plan){ if(!D.s.quiet&&!(D.s.zones||[]).length) return plan; const c=clone(plan); c.blocks.forEach(b=>{ if(b.items) b.items.forEach(it=>{ if(Array.isArray(it)) it[0]=qx(it[0]); else it.ex=qx(it.ex); }); if(b.a){ b.a=qx(b.a); b.b=qx(b.b); } if(b.steps) b.steps.forEach(x=>{ x[0]=qx(x[0]); }); }); return c; }
@@ -773,7 +783,7 @@ const ILLU=(()=>{
     return `<svg viewBox="0 0 210 170" class="illu" aria-hidden="true">${s.d(acc)}${man(s.p,ink,shirt)}</svg>`; };
 })();
 const illuFor=id=>ILLU(id,'#121116',TON(id)==='#FFFFFF'?'rgba(255,255,255,.38)':'rgba(18,17,22,.16)',typeof shirtCol==='function'?shirtCol():'#FFFFFF');
-const APP_VER='dromos-v1';
+const APP_VER='dromos-v2';
 let NEW_VER=false, VER_AT=0;
 async function checkVersion(){ if(window.claude||APP_VER==='dev'||Date.now()-VER_AT<10*60000) return; VER_AT=Date.now(); try{ const r=await fetch('version.json',{cache:'no-store'}); const j=await r.json(); if(j&&j.v&&j.v!==APP_VER&&!NEW_VER){ NEW_VER=true; render(); } }catch(e){} }
 function verBanner(){ return NEW_VER?`<div class="verbar glass"><span class="small"><b>Nouvelle version disponible</b></span><button class="btn sm primary" data-act="reloadApp">Mettre à jour</button></div>`:''; }
@@ -825,6 +835,24 @@ function min3Session0(){ const th=todayTheme(), r=rng(dayIndex()*17+3);
   if(th.f==='mobilite') return {k:'min3',theme:th.id,themeN:th.n,title:'3 minutes',fmt:'6 étirements de 30 s',n:0,blocks:[{t:'Mobilité',type:'circuit',items:MOB.slice(0,6).map(e=>[e,30])}]};
   const ex=byPosition(pickEx(th.pool,2,r).slice(0,2));
   return {k:'min3',theme:th.id,themeN:th.n,title:'3 minutes',fmt:'6 rounds de 20 s / 10 s : juste de quoi garder ta série',n:1,blocks:[{t:'3 minutes',type:'tabata',a:ex[0],b:ex[1]||ex[0],rounds:6,work:20,rest:10}]}; }
+/* Pauses posture : 3 min au bureau, sans transpirer. Ne comptent pas comme une séance (ni série, ni intensité). */
+const POSTURE=['omoplates','menton','w_assis','rot_assise','etir_cou','ext_chaise','etir_pecs','hanche_debout'], POST_SECS={etir_cou:40,etir_pecs:40,hanche_debout:40};
+const postureToday=()=>+((D.s.posture||{})[iso()])||0;
+function postureWeek(){ const m=monday(); let n=0; for(let i=0;i<7;i++) n+=+((D.s.posture||{})[addDays(m,i)])||0; return n; }
+function postureSession(){ const r=rng(dayIndex()*31+postureToday()*7+5), pick=POSTURE.slice(1).map(e=>[r(),e]).sort((a,b)=>a[0]-b[0]).slice(0,5).map(x=>x[1]);
+  pick.splice(2,0,'omoplates'); return {k:'posture',theme:'mobilite',title:'Pause posture',fmt:'6 exercices de 30 à 40 s, debout ou assis',n:0,blocks:[{t:'Pause posture',type:'circuit',items:pick.map(e=>[e,POST_SECS[e]||30])}]}; }
+let POSTURE_T0=Date.now(), POSTURE_NUDGE=0;
+function postureTick(){ const every=(+D.s.postureRem||0)*60000; if(!every||P) return; const now=new Date(), wd=now.getDay(), h=now.getHours()+now.getMinutes()/60;
+  if(wd===0||wd===6||h<9||h>=18.5) return; const last=Math.max(D.s.postureLast||0,POSTURE_T0,POSTURE_NUDGE); if(Date.now()-last<every) return; POSTURE_NUDGE=Date.now();
+  if(document.visibilityState!=='visible'&&'Notification' in window&&Notification.permission==='granted'){ try{ const n=new Notification('Pause posture',{body:'3 minutes pour redresser le dos et ouvrir les épaules.',icon:'icon-192.png',tag:'posture'}); n.onclick=()=>{ try{ window.focus(); }catch(e){} n.close(); ACT.startPosture(); }; return; }catch(e){} }
+  toast('C’est l’heure d’une pause posture : 3 min, dans « À faire aussi ».'); beep(660,.12); }
+setInterval(()=>{ try{ postureTick(); }catch(e){} },60000);
+function postureCard(){ const v=+D.s.postureRem||0, notif=!window.claude&&'Notification' in window;
+  return `<section class="card glass"><span class="h-sec">Pauses posture</span><p class="small sub">Un rappel en semaine, de 9 h à 18 h 30, pour faire 3 min d’exercices de posture au bureau. Il fonctionne quand Dromos est ouvert, même dans un onglet en arrière-plan sur le PC.</p>
+    <div class="chips">${[[0,'Désactivé'],[60,'Toutes les heures'],[90,'Toutes les 1 h 30'],[120,'Toutes les 2 h']].map(([n,l])=>`<button class="pill ${v===n?'on':''}" aria-pressed="${v===n}" data-act="setPostureRem" data-n="${n}">${l}</button>`).join('')}</div>
+    ${v&&notif&&Notification.permission==='default'?`<div class="row" style="margin-top:10px"><button class="btn sm" data-act="postureNotif">Autoriser les notifications</button><span class="xs muted">pour être prévenu quand Dromos est en arrière-plan</span></div>`:''}
+    ${v&&notif&&Notification.permission==='denied'?`<p class="xs muted" style="margin-top:8px">Notifications bloquées dans le navigateur : le rappel s’affichera seulement quand Dromos est à l’écran.</p>`:''}
+    <p class="xs muted" style="margin-top:8px">Cette semaine : ${postureWeek()} pause${postureWeek()>1?'s':''}.</p></section>`; }
 function miniSession0(){ const p=dailyTabata0({short:true}); return {...p,k:'mini',title:'Version courte · '+p.title}; }
 function tierText(t){ const [w,r]=tierWork(t); return `${tierBlocks(t)} bloc${tierBlocks(t)>1?'s':''} de ${tierRounds(t)} rounds ${w}/${r} s, exercices ${['faciles','intermédiaires','avancés'][tierDiff(t)-1]}`; }
 function tierUnlock(t){ if(t>=10) return 'Intensité maximale atteinte : le défi, c’est de la garder.';
@@ -992,6 +1020,7 @@ function vToday(){
   if(!D.s.goalSet) todo.push(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">★</span><span class="tx"><b>Choisis ton objectif</b><span>Perdre du poids, te muscler, ou les deux : ta semaine s’adapte</span></span><button class="btn sm primary" data-act="goalSheet">Choisir</button></li>`);
   if(testDue()&&!TESTFORM) todo.push(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">?</span><span class="tx"><b>Où en es-tu ?</b><span>3 mini-tests pour ajuster ton programme</span></span><button class="btn sm primary" data-act="openTest">Faire</button></li>`);
   CHALL.forEach(c=>{ const st=chState(c); if(!st||st.day>30) return; todo.push(`<li><span class="ic" style="background:#FFF0D6;color:#8A5A00">${chTarget(c,st.day)}</span><span class="tx"><b>Défi ${c.n.toLowerCase()} · jour ${st.day}</b><span>${chTarget(c,st.day)} ${c.unit} aujourd’hui</span></span><button class="btn sm ${st.doneToday?'':'primary'}" data-act="doCh" data-id="${c.id}">${st.doneToday?'✓':'Valider'}</button></li>`); });
+  { const wd=new Date().getDay(), h=new Date().getHours(), pn=postureToday(); if((wd>0&&wd<6&&h>=9&&h<19)||pn) todo.push(`<li><span class="ic" style="background:#DFF5EC;color:#0B7A57">${pn||'3’'}</span><span class="tx"><b>Pause posture${pn?' · '+pn+' aujourd’hui':''}</b><span>3 min au bureau : dos droit, épaules ouvertes</span></span><button class="btn sm" data-act="startPosture">3 min</button></li>`); }
   const forceWeek=ws.filter(x=>isForce(x.k)).length;
   if(todayTheme().walk) todo.push(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">${svg('play',16)}</span><span class="tx"><b>Marche active · 30 min</b><span>Dehors à bon rythme : ça compte pour ton objectif</span></span></li>`);
   if(false) todo.push(`<li><span class="ic" style="background:#1C1B22;color:#fff">${svg('dumb',18)}</span><span class="tx"><b>Force · séance ${nx.k}</b><span>${esc(nx.plan.title)} · ${estMin(nx.plan)} min · ${forceWeek}/2 cette semaine</span></span><button class="btn sm" data-act="startNext">Lancer</button></li>`);
@@ -1059,6 +1088,7 @@ function vTrainHub(){ const tb=dailyTabata(), t=iso(), days=new Set(D.s.sessions
     <button class="ptile" style="background:#E81F70;color:#fff" data-act="ptab" data-id="mesure"><span>Durée + zone</span><b>Sur<br>mesure</b></button>
     <button class="ptile" style="background:#FFB000;color:#121116" data-act="ptab" data-id="defis"><span>${act?act[0].n+' · jour '+act[1].day:'Pompes, squats, planche…'}</span><b>Défis<br>30 j</b></button>
     <button class="ptile" style="background:#14B8C9;color:#121116" data-act="startMob"><span>7 min, jours de repos</span><b>Mobilité</b></button>
+    <button class="ptile wide" style="background:#0F9F73;color:#fff" data-act="startPosture"><span>3 min au bureau · ${postureWeek()} cette semaine</span><b>Posture</b></button>
     <button class="ptile wide" style="background:#2F6BFF;color:#fff" data-act="openTestHub"><span>${lt?'Dernier test le '+fmtDate(lt.d)+(testDue()?' · à refaire':' · prochain dans '+Math.max(1,TEST_EVERY-Math.round((Date.parse(t+'T12:00:00')-Date.parse(lt.d+'T12:00:00'))/864e5))+' j'):'Pas encore fait'}</span><b>Où en es-tu ?</b></button>
   </div>`+syncLine(); }
 function vProgramme(){
@@ -1189,6 +1219,7 @@ function vCompte(){ const s=D.s;
     <p class="small sub">Les exercices qui sollicitent ces zones sont remplacés automatiquement.</p>
     <div class="chips">${Object.entries(BODYZ).map(([k,z])=>`<button class="pill ${(D.s.zones||[]).includes(k)?'on':''}" aria-pressed="${(D.s.zones||[]).includes(k)}" data-act="toggleZone" data-z="${k}">${z.n}</button>`).join('')}</div></section>
   ${notifCard()}
+  ${postureCard()}
   ${window.claude?'':`<section class="card glass"><span class="h-sec">Apparence</span><div class="seg" role="group" aria-label="Thème" style="background:var(--track)">${[['auto','Automatique'],['light','Clair'],['dark','Sombre']].map(([v,l])=>`<button aria-pressed="${(s.theme||'auto')===v}" data-act="setTheme" data-v="${v}">${l}</button>`).join('')}</div></section>`}
   <section class="card glass"><div class="between" style="align-items:center"><span class="h-sec">Sauvegardes</span><button class="btn sm" data-act="downloadBackup">Télécharger</button></div>
     <p class="xs muted">Une sauvegarde par jour sur cet appareil, les 14 derniers jours. Restaurer remplace ta progression et tes recettes par celles du jour choisi.</p>
@@ -1446,7 +1477,14 @@ const ANIM={poirier_mur:[PK,PKD],lsit_chaise:[DP1,DP1],pistol_assiste:[BL1,BL2],
  hollow:[HO1,HO2],superman:[SM1,SM2],crunch_velo:[CV1,CV2],rot_bras:[UP,RA2],chat_vache:[CC1,CC2],cercles_hanches:[HC1,HC2],
  cobra:[SM1,pz(SM1,{h:[98,70],n:[90,78],eL:[92,86],wL:[96,92],eR:[91,87],wR:[95,93]})],torsion:[BG,pz(BG,{kL:[80,84],fL:[84,92],kR:[79,85],fR:[83,93]})],
  fente_basse:[pz(LU,{kR:[50,92],fR:[34,92]}),pz(LU,{p:[64,68],kR:[52,92],fR:[34,92]})],etir_mollets:[pz(LU,{kR:[50,76],fR:[40,92],eL:[74,34],wL:[86,32],eR:[73,35],wR:[85,33]}),pz(LU,{kR:[50,76],fR:[40,92],eL:[76,36],wL:[88,34],eR:[75,37],wR:[87,35]})],
- etir_pecs:[ETP,pz(ETP,{wL:[34,22]})],etir_quadri:[ETQ,pz(ETQ,{fR:[50,56]})],etir_ischios:[ETI,pz(ETI,{h:[86,76],n:[80,66]})],enfant:[EN,pz(EN,{n:[80,80],p:[50,78]})]};
+ etir_pecs:[ETP,pz(ETP,{wL:[34,22]})],etir_quadri:[ETQ,pz(ETQ,{fR:[50,56]})],etir_ischios:[ETI,pz(ETI,{h:[86,76],n:[80,66]})],enfant:[EN,pz(EN,{n:[80,80],p:[50,78]})],
+ omoplates:[pz(SS,{eL:[56,40],wL:[50,55],eR:[55,41],wR:[49,56]}),pz(SS,{h:[62,12],n:[61,24],eL:[52,41],wL:[42,52],eR:[51,42],wR:[41,53]})],
+ menton:[pz(SS,{h:[64,13]}),pz(SS,{h:[58,13]})],
+ w_assis:[pz(SF,{eL:[44,30],wL:[46,14],eR:[76,30],wR:[74,14]}),pz(SF,{eL:[47,40],wL:[42,24],eR:[73,40],wR:[78,24]})],
+ rot_assise:[pz(SF,{eL:[50,36],wL:[66,32],eR:[70,36],wR:[54,32]}),pz(SF,{h:[57,13],eL:[45,35],wL:[60,30],eR:[64,37],wR:[48,33]})],
+ etir_cou:[SF,pz(SF,{h:[53,16],wR:[60,8],eR:[70,22]})],
+ ext_chaise:[pz(SS,{eL:[70,18],wL:[62,12],eR:[69,19],wR:[61,13]}),pz(SS,{h:[56,14],n:[57,25],eL:[66,14],wL:[55,10],eR:[65,15],wR:[54,11]})],
+ hanche_debout:[pz(LU,{eL:[62,24],wL:[64,8],eR:[61,25],wR:[63,9]}),pz(LU,{h:[58,24],n:[59,35],p:[62,63],eL:[60,22],wL:[60,5],eR:[59,23],wR:[59,6]})]};
 const BONES=[['n','p',''],['n','eR','far'],['eR','wR','far'],['p','kR','far'],['kR','fR','far'],['n','eL',''],['eL','wL',''],['p','kL',''],['kL','fL','']];
 const figSVG=()=>`<div class="figwrap"><svg class="fig" viewBox="0 0 120 100" aria-hidden="true"><line class="gr" x1="4" y1="94.5" x2="116" y2="94.5"/>${BONES.map(b=>`<line class="${b[2]}"/>`).join('')}<circle r="6.5"/></svg></div>`;
 let FIG=null;
@@ -1458,7 +1496,7 @@ function figStart(svgEl,ex,per){ figStop(); if(!svgEl) return; const a=ANIM[ex];
     BONES.forEach((b,i)=>{ const l=lines[i]; l.setAttribute('x1',P[b[0]][0]); l.setAttribute('y1',P[b[0]][1]); l.setAttribute('x2',P[b[1]][0]); l.setAttribute('y2',P[b[1]][1]); });
     head.setAttribute('cx',P.h[0]); head.setAttribute('cy',P.h[1]); if(!reduce) f.raf=requestAnimationFrame(draw); };
   draw(performance.now()); }
-const STRETCH=new Set(['etir_pecs','etir_quadri','etir_ischios','enfant','cobra','torsion','fente_basse','etir_mollets','chat_vache','cercles_hanches']);
+const STRETCH=new Set(['omoplates','menton','w_assis','rot_assise','etir_cou','ext_chaise','hanche_debout','etir_pecs','etir_quadri','etir_ischios','enfant','cobra','torsion','fente_basse','etir_mollets','chat_vache','cercles_hanches']);
 let BRIEF=null;
 function fmtKind(p){ return p.theme==='mobilite'?'mobilite':p.cali?'cali':p.hiit?'hiit':(p.surprise||'tabata'); }
 function seenEx(){ const s=new Set(); D.s.sessions.forEach(x=>(x.ex||[]).forEach(e=>s.add(e))); return s; }
@@ -1562,7 +1600,9 @@ function rwAnimate(L0,L1,up){ const el=$('#rwXp'), total=P.xp, t0=performance.no
   const bar=$('#rwBar'); setTimeout(()=>{ if(!bar) return; if(up){ bar.style.width='100%'; setTimeout(()=>{ if(!$('#rwBar')) return; bar.style.transition='none'; bar.style.width='0%'; $('#rwL').textContent=L1.L; $('#rwR').textContent=L1.rank; const u=$('#rwUp'); if(u) u.hidden=false; beep(1320,.2); requestAnimationFrame(()=>{ bar.style.transition=''; bar.style.width=Math.round(L1.cur/L1.need*100)+'%'; }); },900); } else bar.style.width=Math.round(L1.cur/L1.need*100)+'%'; },250);
   $$q('.rw-list>div').forEach((d,i)=>{ d.style.animationDelay=(0.6+i*0.25)+'s'; }); }
 const $$q=s=>[...document.querySelectorAll(s)];
-function finish(){ figStop(); P.finished=true; P.min=Math.max(1,Math.round((Date.now()-P.startedAt)/60000)); P.kcalF=Math.max(1,Math.round(P.kcal));
+function finish(){ if(P&&P.meta&&P.meta.k==='posture'){ figStop(); const t=iso(); D.s.posture=D.s.posture||{}; D.s.posture[t]=(+D.s.posture[t]||0)+1; D.s.postureLast=Date.now(); save('s');
+    beep(880,.2); const n=D.s.posture[t]; closePlayer(); toast('Pause posture faite'+(n>1?' ('+n+' aujourd’hui)':'')+'. Ton dos te dit merci.'); return; }
+  figStop(); P.finished=true; P.min=Math.max(1,Math.round((Date.now()-P.startedAt)/60000)); P.kcalF=Math.max(1,Math.round(P.kcal));
   const t=iso(), before=D.s.sessions.some(x=>x.d===t), days=new Set(D.s.sessions.map(x=>x.d)); days.add(t);
   const n=streakOf(days,t);
   P.streakAfter=n;
@@ -1695,6 +1735,9 @@ const ACT={
   async duoUnlink(b){ try{ await SB.req('/rest/v1/elan_duo?a=eq.'+b.dataset.a+'&b=eq.'+b.dataset.b,{method:'DELETE'}); DUO=null; render(); }catch(e){ toast('Impossible pour l’instant.'); } },
   setGoal(b){ const g=b.dataset.g; if(!GOALS[g]) return; D.s.goal=g; D.s.goalSet=true; save('s'); DAY_ID=''; const inSheet=!!b.closest('.sheet'); if(inSheet) closeSheet(); render(); toast('Objectif : '+GOALS[g].n+'. Ta semaine est adaptée.'); },
   goalSheet(){ openSheet(`<div class="between"><h2 class="title-l">Ton objectif</h2><button class="icon-btn glass" data-act="closeSheet" aria-label="Fermer">${svg('x',16)}</button></div><p class="sub">Ta semaine change selon l’objectif. L’intensité et le test « Où en es-tu ? » continuent de s’adapter à toi.</p>${goalPick()}`); },
+  startPosture(){ startPlayer(postureSession(),{k:'posture'}); },
+  setPostureRem(b){ D.s.postureRem=+b.dataset.n; POSTURE_T0=Date.now(); save('s'); render(); },
+  postureNotif(){ try{ Notification.requestPermission().then(()=>render()); }catch(e){} },
   startMob(){ const z=MZ, d=MD; MZ='mobilite'; MD=1; const p=customSession(); MZ=z; MD=d; startPlayer(p,{k:'libre'}); },
   openTestHub(){ location.hash='today'; setTimeout(()=>ACT.openTest(),60); },
   ptab(b){ PROG_TAB=b.dataset.id; render(); window.scrollTo(0,0); },
