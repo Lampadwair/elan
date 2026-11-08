@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-tNujrQRcDmM1gaeX7VaMQ081zBGGa4MPCwykExM/WPk='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-B0WvSu/nJxd2jJ7/gJiVrFdHM6DBpnK9/x33q9buIYc='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
@@ -83,7 +83,17 @@ p{margin:0}
 .lvl{width:50px;height:50px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;color:var(--ink);flex:none}
 .lvl small{font-size:.58rem;font-weight:700;color:var(--muted);line-height:1;letter-spacing:.06em}
 .lvl b{font-size:1.15rem;line-height:1.1}
-.lvl[aria-current="page"]{background:var(--fill);color:var(--on-cta)}
+.lvl .av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--day);color:var(--on-day);font-weight:800;font-size:1.1rem}
+.lvl[aria-current="page"] .av{box-shadow:0 0 0 2.5px var(--ink)}
+.prof{flex-direction:row;align-items:center;gap:16px;text-align:left;font:inherit;color:var(--ink);cursor:pointer;width:100%}
+.prof .pav{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--day);color:var(--on-day);font-family:var(--display);font-size:2rem;flex:none}
+.prof .pt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px} .prof .pt b{font-size:1.25rem} .prof .pt span{font-size:.85rem;color:var(--muted)} .prof .pt .why{color:var(--ink);font-style:italic;margin-top:4px}
+.chev{color:var(--muted);font-size:1.4rem;line-height:1;flex:none}
+.card.menu{padding:4px 0;gap:0}
+.menu button{display:flex;align-items:center;gap:14px;width:100%;padding:13px 18px;border:0;background:none;font:inherit;color:var(--ink);text-align:left;cursor:pointer;border-bottom:1px solid var(--track)}
+.menu button:last-child{border-bottom:0}
+.menu .mi{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;color:#fff;flex:none}
+.menu .mt{flex:1;min-width:0;display:flex;flex-direction:column} .menu .mt b{font-size:.98rem} .menu small{color:var(--muted);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sync{font-size:.72rem;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
 .sync i{width:6px;height:6px;border-radius:50%;background:var(--muted)} .sync.ok i{background:var(--good)} .sync.err i{background:var(--danger)}
 
@@ -453,7 +463,8 @@ function longDate(){ const s=new Date().toLocaleDateString('fr-FR',{weekday:'lon
 function mmss(s){ s=Math.max(0,Math.ceil(s)); return s<60?String(s):Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
 let toastT; function toast(msg){ const t=$('#toast'); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,3200); }
 const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-const ICO={path:'<path d="M3 20l6-11 4 6 3-4 5 9z"/><path d="M9 9V4l4 2-4 2"/>',
+const ICO={bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+path:'<path d="M3 20l6-11 4 6 3-4 5 9z"/><path d="M9 9V4l4 2-4 2"/>',
 swap:'<path d="M4 8h13l-3-3M20 16H7l3 3"/>', home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/>',
  prog:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
  chart:'<path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/>',
@@ -793,7 +804,7 @@ const ILLU=(()=>{
     return `<svg viewBox="0 0 210 170" class="illu" aria-hidden="true">${s.d(acc)}${man(s.p,ink,shirt)}</svg>`; };
 })();
 const illuFor=id=>ILLU(id,'#121116',TON(id)==='#FFFFFF'?'rgba(255,255,255,.38)':'rgba(18,17,22,.16)',typeof shirtCol==='function'?shirtCol():'#FFFFFF');
-const APP_VER='dromos-v4';
+const APP_VER='dromos-v5';
 let NEW_VER=false, VER_AT=0;
 async function checkVersion(){ if(window.claude||APP_VER==='dev'||Date.now()-VER_AT<10*60000) return; VER_AT=Date.now(); try{ const r=await fetch('version.json',{cache:'no-store'}); const j=await r.json(); if(j&&j.v&&j.v!==APP_VER&&!NEW_VER){ NEW_VER=true; render(); } }catch(e){} }
 function verBanner(){ return NEW_VER?`<div class="verbar glass"><span class="small"><b>Nouvelle version disponible</b></span><button class="btn sm primary" data-act="reloadApp">Mettre à jour</button></div>`:''; }
@@ -958,7 +969,7 @@ function prunePlan(){ const lim=addDays(monday(),-14); for(const k of Object.key
 const VIEWS=[['today','Aujourd’hui','home'],['programme','Séances','dumb'],['progres','Parcours','path'],['repas','Repas','food'],['compte','Compte','user']];
 let PG_TAB=({apercu:'chemin',corps:'stats',historique:'stats',duo:'amis'})[LS.get('elan_pg')]||LS.get('elan_pg')||'chemin'; if(!['chemin','stats','amis'].includes(PG_TAB)) PG_TAB='chemin';
 let VIEW='today', PROG_TAB='hub', REPAS_TAB=LS.get('elan_rt')||'semaine', PLAN_OFF=0, RFILTER='toutes', RSEARCH='', TESTFORM=false, SEL_USER=null;
-function route(){ const h=location.hash.slice(1); if(h==='seance'||h==='3min'){ history.replaceState(null,'','#today'); VIEW='today'; render(); setTimeout(()=>h==='3min'?ACT.startMin3():ACT.brief(),60); return; } VIEW=VIEWS.some(v=>v[0]===h)?h:'today'; if(VIEW==='programme') PROG_TAB='hub'; render(); window.scrollTo(0,0); }
+function route(){ const h=location.hash.slice(1); if(h==='seance'||h==='3min'){ history.replaceState(null,'','#today'); VIEW='today'; render(); setTimeout(()=>h==='3min'?ACT.startMin3():ACT.brief(),60); return; } VIEW=VIEWS.some(v=>v[0]===h)?h:'today'; if(VIEW==='programme') PROG_TAB='hub'; if(VIEW==='compte'){ ACCT_TAB=ACCT_NEXT; ACCT_NEXT=''; } render(); window.scrollTo(0,0); }
 function render(){
   applyTheme(); applyDay();
   $('#tabs').innerHTML=VIEWS.slice(0,4).map(([id,l,ic])=>`<a href="#${id}" ${VIEW===id?'aria-current="page"':''} ${id==='repas'&&VIEW!==id?'style="opacity:.5"':''}>${svg(ic)}${l}</a>`).join('');
@@ -990,7 +1001,7 @@ function nextStepCard(){ const q=questState().find(x=>!x.done); if(!q) return ''
 function goalPick(){ const g=goal(); return `<div class="goalpick">${Object.entries(GOALS).map(([k,o])=>`<button data-act="setGoal" data-g="${k}" aria-pressed="${g===k}"><b>${o.n}</b><span>${o.d}</span></button>`).join('')}</div>`; }
 function header(title,sub){
   return `<header class="head"><div style="min-width:0"><div class="label">${sub||longDate()}</div><h1 class="title-xl fit" style="${fitSz(title,2.5,100)}">${title}</h1></div>
-  <a href="#compte" class="lvl glass" ${VIEW==='compte'?'aria-current="page"':''} aria-label="Compte et réglages">${svg('user',22)}</a></header>`; }
+  <a href="#compte" class="lvl glass" data-act="goCompte" ${VIEW==='compte'?'aria-current="page"':''} aria-label="Compte et réglages"><span class="av">${esc((D.s.name||'').trim().charAt(0).toUpperCase())||svg('user',20)}</span></a></header>`; }
 function syncLine(){ return `<div style="text-align:center"><span id="sync" class="sync ${SYNC==='ok'?'ok':SYNC==='err'?'err':''}"><i></i>${SYNC_TXT[SYNC]||''}</span></div>`; }
 function testForm(){ return `<section class="card glass" id="testcard"><div><div class="label">3 mini-tests · 5 minutes</div><h2 class="title-l" style="margin-top:4px">Où en es-tu ?</h2></div>
   <p class="small sub">Fais chaque exercice une fois, avec 2 minutes de pause entre les deux. ${D.s.tests.length?'Tes résultats ajustent l’intensité de tes séances : à refaire toutes les 4 semaines.':'C’est ton point de départ, pas une note.'}${lastTest()?` Dernier test le ${fmtDate(lastTest().d)} : ${lastTest().pu} pompes, ${lastTest().sq} squats, ${lastTest().pl} s de planche.`:''}</p>
@@ -1213,12 +1224,20 @@ function notifCard(){ const s=D.s, time=`<input type="time" id="remind_t" value=
     <div class="between" style="align-items:center"><span class="small">Ajuster l’heure à mes habitudes</span><button class="btn sm" data-act="toggleRemindAuto">${s.remindAuto?'Oui':'Non'}</button></div>
     <p class="xs muted">${s.remindAuto?'Le rappel arrive 30 min avant l’heure où tu t’entraînes d’habitude (calculée sur tes 14 dernières séances).':'Le rappel suit l’heure choisie ci-dessus.'}</p>
     <div id="pushMsg" class="small sub" aria-live="polite"></div></section>`; }
+let ACCT_TAB='', ACCT_NEXT='';
+const ACCT_SECS=[
+  ['profil','Profil et objectif','#E81F70','user',()=>`${esc(D.s.name||'Ton prénom')} · ${GOALS[goal()].n}`],
+  ['synchro','Compte et synchro','#2F6BFF','swap',()=>window.claude?'Synchro avec ton compte Claude':MODE==='supa'?'Connecté'+((SB.sess()||{}).email?' · '+esc(SB.sess().email):''):'Pas connecté · données sur cet appareil'],
+  ['seances','Séances','#F04A24','play',()=>[D.s.voice?'Voix':'Sans voix',D.s.quiet?'sans bruit':'',weekTarget()+' jours par semaine',(D.s.zones||[]).length?(D.s.zones||[]).length+' zone'+((D.s.zones||[]).length>1?'s':'')+' sensible'+((D.s.zones||[]).length>1?'s':''):''].filter(Boolean).join(' · ')],
+  ['rappels','Rappels','#0F9F73','bell',()=>[D.s.pushOn&&MODE==='supa'?'Rappel à '+esc(D.s.remind||'18:30'):'Rappel quotidien',+D.s.postureRem?'posture toutes les '+({60:'heures',90:'1 h 30',120:'2 h'}[D.s.postureRem]||D.s.postureRem+' min'):''].filter(Boolean).join(' · ')],
+  ['apparence','Apparence','#7A4DFF','sun',()=>({auto:'Automatique',light:'Clair',dark:'Sombre'}[D.s.theme||'auto'])],
+  ['donnees','Sauvegardes et données','#6B7280','chart',()=>'Sauvegardes, transfert entre versions']];
 function vCompte(){ const s=D.s;
-  return header('Compte',' ')+`
-  <section class="card glass"><span class="h-sec">Profil</span>
-    <div><div class="label" style="margin-bottom:6px">Objectif</div><div class="sheet-like">${goalPick()}</div></div><div class="fields"><label class="f">Prénom<input type="text" id="set_name" maxlength="30" value="${esc(s.name)}"></label><label class="f">Mon pourquoi<input type="text" id="why" maxlength="140" value="${esc(s.why)}" placeholder="Ex. Retrouver de l’énergie"></label></div></section>
-  ${accountCard()}
-  <section class="card glass"><span class="h-sec">Pendant les séances</span>
+  if(window.claude&&ACCT_TAB==='apparence') ACCT_TAB='';
+  const sec=ACCT_SECS.find(x=>x[0]===ACCT_TAB);
+  if(sec){ const back=`<button class="backlink" data-act="acctTab" data-id="">‹ Compte</button>`, T={profil:'Profil',synchro:'Synchro',donnees:'Données'}[sec[0]]||sec[1];
+    const html={profil:`<section class="card glass"><span class="h-sec">Toi</span><div class="fields"><label class="f">Prénom<input type="text" id="set_name" maxlength="30" value="${esc(s.name)}"></label><label class="f">Mon pourquoi<input type="text" id="why" maxlength="140" value="${esc(s.why)}" placeholder="Retrouver de l’énergie"></label></div><p class="xs muted">Ton pourquoi s’affiche sur ton profil, pour garder le cap.</p></section>
+  <section class="card glass"><span class="h-sec">Objectif</span><p class="small sub">Ta semaine change selon l’objectif. L’intensité continue de s’adapter à toi.</p><div class="sheet-like">${goalPick()}</div></section>`,synchro:`${accountCard()||`<section class="card glass"><p class="small sub">La synchro n’est pas disponible dans cette version.</p></section>`}`,seances:`<section class="card glass"><span class="h-sec">Pendant les séances</span>
     <div class="between" style="align-items:center"><span class="small">Annonces vocales</span><button class="btn sm" data-act="toggleVoice">${s.voice?'Oui':'Non'}</button></div>
     <div class="between" style="align-items:center"><span class="small">Garder ma musique</span><button class="btn sm" data-act="toggleMusic">${s.keepMusic?'Oui':'Non'}</button></div>
     <div class="between" style="align-items:center"><span class="small">Tempo : un tic chaque seconde d’effort</span><button class="btn sm" data-act="toggleTempo">${s.tempo?'Oui':'Non'}</button></div>
@@ -1229,18 +1248,19 @@ function vCompte(){ const s=D.s;
     ${weekTarget()<7?`<div class="chips">${JOURS.map((j,i)=>`<button class="pill ${(D.s.offDays||[]).includes(i)?'on':''}" aria-pressed="${(D.s.offDays||[]).includes(i)}" data-act="toggleOff" data-i="${i}">${j.slice(0,3)}${(D.s.offDays||[]).includes(i)?' · repos':''}</button>`).join('')}</div>`:''}</section>
   <section class="card glass"><span class="h-sec">Zones sensibles</span>
     <p class="small sub">Les exercices qui sollicitent ces zones sont remplacés automatiquement.</p>
-    <div class="chips">${Object.entries(BODYZ).map(([k,z])=>`<button class="pill ${(D.s.zones||[]).includes(k)?'on':''}" aria-pressed="${(D.s.zones||[]).includes(k)}" data-act="toggleZone" data-z="${k}">${z.n}</button>`).join('')}</div></section>
-  ${notifCard()}
-  ${postureCard()}
-  ${window.claude?'':`<section class="card glass"><span class="h-sec">Apparence</span><div class="seg" role="group" aria-label="Thème" style="background:var(--track)">${[['auto','Automatique'],['light','Clair'],['dark','Sombre']].map(([v,l])=>`<button aria-pressed="${(s.theme||'auto')===v}" data-act="setTheme" data-v="${v}">${l}</button>`).join('')}</div></section>`}
-  <section class="card glass"><div class="between" style="align-items:center"><span class="h-sec">Sauvegardes</span><button class="btn sm" data-act="downloadBackup">Télécharger</button></div>
+    <div class="chips">${Object.entries(BODYZ).map(([k,z])=>`<button class="pill ${(D.s.zones||[]).includes(k)?'on':''}" aria-pressed="${(D.s.zones||[]).includes(k)}" data-act="toggleZone" data-z="${k}">${z.n}</button>`).join('')}</div></section>`,rappels:`${notifCard()}\n  ${postureCard()}`,apparence:`<section class="card glass"><span class="h-sec">Apparence</span><div class="seg" role="group" aria-label="Thème" style="background:var(--track)">${[['auto','Automatique'],['light','Clair'],['dark','Sombre']].map(([v,l])=>`<button aria-pressed="${(s.theme||'auto')===v}" data-act="setTheme" data-v="${v}">${l}</button>`).join('')}</div></section>`,donnees:`<section class="card glass"><div class="between" style="align-items:center"><span class="h-sec">Sauvegardes</span><button class="btn sm" data-act="downloadBackup">Télécharger</button></div>
     <p class="xs muted">Une sauvegarde par jour sur cet appareil, les 14 derniers jours. Restaurer remplace ta progression et tes recettes par celles du jour choisi.</p>
     <div id="snaps">${snapsInner()}</div></section>
   <details class="card glass"><summary class="h-sec">Transférer mes données</summary>
     <p class="xs muted">Pour passer ta progression et tes recettes d’une version de l’appli à l’autre (claude.ai ↔ appli iPhone).</p>
     <div><button class="btn sm" data-act="copyData">Copier mes données</button></div>
     <textarea id="xfer" rows="3" placeholder="Colle ici des données copiées depuis l’autre version" aria-label="Données à importer"></textarea>
-    <div><button class="btn sm danger" data-act="pasteData" data-confirm>Remplacer par ces données</button></div></details>`+syncLine();
+    <div><button class="btn sm danger" data-act="pasteData" data-confirm>Remplacer par ces données</button></div></details>`}[ACCT_TAB];
+    return header(T,' ')+back+html+syncLine(); }
+  const lv=lvlInfo(totalXp()), st=dayStreak(), ini=esc((s.name||'?').trim().charAt(0).toUpperCase()||'?');
+  return header('Compte',' ')+`
+  <button class="card glass prof" data-act="acctTab" data-id="profil"><span class="pav">${ini}</span><span class="pt"><b>${esc(s.name||'Ton prénom')}</b><span>Niveau ${lv.L} · ${lv.rank}${st?' · série de '+st+' jour'+(st>1?'s':''):''}</span><span>Objectif : ${GOALS[goal()].n}</span>${s.why?`<span class="why">« ${esc(s.why)} »</span>`:''}</span><span class="chev">›</span></button>
+  <nav class="card glass menu" aria-label="Réglages">${ACCT_SECS.filter(x=>!(window.claude&&x[0]==='apparence')).slice(1).map(([id,n,c,ic,sub])=>`<button data-act="acctTab" data-id="${id}"><span class="mi" style="background:${c}">${svg(ic,18)}</span><span class="mt"><b>${n}</b><small>${sub()}</small></span><span class="chev">›</span></button>`).join('')}</nav>`+syncLine();
 }
 function forceCard(){ const hist={}; D.s.sessions.forEach(x=>{ if(x.reps) for(const e in x.reps){ (hist[e]=hist[e]||[]).push({d:x.d,v:x.reps[e]}); } });
   const ex=Object.keys(hist).sort((a,b)=>hist[b].length-hist[a].length).slice(0,6);
@@ -1755,6 +1775,8 @@ const ACT={
   swapDay(b){ const j=+b.dataset.j, t=dow(), m=monday(), p=[...weekPerm()], wp=weekPlan(); if(!(j>t&&j<7)) return; [p[t],p[j]]=[p[j],p[t]];
     D.s.swaps={[m]:p}; save('s'); closeSheet(); render(); toast(`${wp[j].n} aujourd’hui. ${wp[t].n} passe à ${JOURS[j].toLowerCase()}.`); },
   swapReset(){ D.s.swaps={}; save('s'); closeSheet(); render(); toast('Semaine remise comme prévu.'); },
+  goCompte(){ if(VIEW==='compte'){ if(ACCT_TAB){ ACCT_TAB=''; render(); window.scrollTo(0,0); } } else location.hash='compte'; },
+  acctTab(b){ ACCT_TAB=b.dataset.id||''; render(); window.scrollTo(0,0); },
   startPosture(){ startPlayer(postureSession(),{k:'posture'}); },
   setPostureRem(b){ D.s.postureRem=+b.dataset.n; POSTURE_T0=Date.now(); save('s'); render(); },
   postureNotif(){ try{ Notification.requestPermission().then(()=>render()); }catch(e){} },
@@ -1765,7 +1787,7 @@ const ACT={
   reroll(){ MSEED++; render(); }, startMesure(){ startPlayer(customSession(),{k:'libre'}); },
   exInfo(b){ const e=b.dataset.ex; if(!EX[e]) return; openSheet(exSheet(e)); figStart($('#sheet .fig'),e,STRETCH.has(e)?3200:1600); },
   pgtab(b){ PG_TAB=b.dataset.id; LS.set('elan_pg',PG_TAB); if(VIEW!=='progres'){ location.hash='#progres'; return; } render(); },
-  goAcct(){ if(VIEW!=='compte'){ location.hash='compte'; } setTimeout(()=>$('#acct')?.scrollIntoView({behavior:'smooth',block:'center'}),150); },
+  goAcct(){ if(VIEW!=='compte'){ ACCT_NEXT='synchro'; location.hash='compte'; } else { ACCT_TAB='synchro'; render(); } window.scrollTo(0,0); },
   async login(){ const m=$('#au_msg'), e=$('#au_email').value.trim(), pw=$('#au_pw').value; if(!e||!pw){ m.textContent='Entre ton e-mail et ton mot de passe.'; return; }
     m.textContent='Connexion…'; try{ await SB.login(e,pw); DIRTY=true; VER++; LS.set('elan_dirty','1'); LS.set('elan_pulled',''); startSupa(); render(); toast('Connecté. Synchro en cours…'); }catch(err){ m.textContent=authErr(err); } },
   async signup(){ const m=$('#au_msg'), e=$('#au_email').value.trim(), pw=$('#au_pw').value; if(!e||!pw){ m.textContent='Entre un e-mail et un mot de passe (6 caractères minimum).'; return; }
@@ -1845,7 +1867,7 @@ const ACT={
 };
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-act]'); if(!b){ if(e.target.id==='sheet') closeSheet(); return; }
-  if(b.hasAttribute('data-confirm')&&!b.dataset.armed){ b.dataset.armed='1'; const t=b.innerHTML; b.textContent='Confirmer ?'; setTimeout(()=>{ if(b.isConnected){ delete b.dataset.armed; b.innerHTML=t; } },3000); return; }
+  if(b.hasAttribute('data-confirm')&&!b.dataset.armed){ b.dataset.armed='1'; const t=b.innerHTML; b.textContent='Confirmer ?'; setTimeout(()=>{ if(b.isConnected){ delete b.dataset.armed; b.innerHTML=t; } },3000); return; }
   const f=ACT[b.dataset.act]; if(f){ e.preventDefault(); f(b); }
 });
 document.addEventListener('change',e=>{ const el=e.target, k=el.dataset.chg;
