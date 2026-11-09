@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-zWalmfSrfLWLKhnF83zKAa4H2zG3CuzBKSVI4hZb3Rc='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-2VivwhTQPN0XnnKANr0dO+vvukRSoiSjDHkEXVSBDeM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
@@ -96,6 +96,7 @@ p{margin:0}
 .steps li{counter-increment:st;display:grid;grid-template-columns:30px 1fr;column-gap:12px;row-gap:2px}
 .steps li::before{content:counter(st);grid-row:span 2;width:30px;height:30px;border-radius:50%;background:var(--day);color:var(--on-day);display:grid;place-items:center;font-weight:800;font-size:.9rem}
 .sheet .hlink{background:none;border:0;padding:4px 0;color:var(--sub);font:inherit;font-size:.85rem;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.hero-day .onb{color:inherit;font-weight:700;font-size:.85rem} .hero-day .onb input{margin-top:6px}
 .steps b{font-size:.95rem} .steps span{font-size:.85rem;color:var(--muted);line-height:1.4}
 .menu button{display:flex;align-items:center;gap:14px;width:100%;padding:13px 18px;border:0;background:none;font:inherit;color:var(--ink);text-align:left;cursor:pointer;border-bottom:1px solid var(--track)}
 .menu button:last-child{border-bottom:0}
@@ -448,7 +449,7 @@ const BASE_RECIPES=[
  {id:'b7',name:'Dahl de lentilles corail',portions:3,time:30,kcal:625,tags:['végétarien','batch cooking'],ing:['250 g lentilles corail','200 ml lait de coco','400 g tomates concassées','1 oignon','150 g riz','1 c. à soupe curry'],steps:'Faire revenir l’oignon avec le curry.\nAjouter lentilles, tomates, lait de coco et 400 ml d’eau. Cuire 20 min.\nServir avec le riz.'},
  {id:'b8',name:'Smoothie banane-avoine',portions:1,time:5,kcal:615,tags:['collation','sans cuisson'],ing:['300 ml lait entier','1 banane','40 g flocons d’avoine','1 c. à soupe beurre de cacahuète','100 g fromage blanc'],steps:'Tout mixer 1 minute.\nIdéal après la séance.'},
 ];
-const DEF_S={name:'Simon',quiet:false,theme:'auto',pushOn:false,favSess:[],challenges:{},measures:[],remind:'18:30',keepMusic:true,tempo:false,best:0,level:null,tests:[],sessions:[],weights:[],adj:0,cycleStart:0,cycle:1,why:'',voice:true,seenFmt:[],goal:'mix',wkc:{},duoDone:{},offDays:[],zones:[],remindAuto:false,shirt:0,qDone:{},tierHist:[],swaps:{},posture:{},postureRem:0,postureLast:0};
+const DEF_S={name:'',quiet:false,theme:'auto',pushOn:false,favSess:[],challenges:{},measures:[],remind:'18:30',keepMusic:true,tempo:false,best:0,level:null,tests:[],sessions:[],weights:[],adj:0,cycleStart:0,cycle:1,why:'',voice:true,seenFmt:[],goal:'mix',wkc:{},duoDone:{},offDays:[],zones:[],remindAuto:false,shirt:0,qDone:{},tierHist:[],swaps:{},posture:{},postureRem:0,postureLast:0};
 const CATS=[['plat','Plats'],['petitdej','Petits-déj'],['collation','Collations'],['dessert','Desserts']];
 const BASE_CAT={b3:'petitdej',b8:'collation'}; BASE_RECIPES.forEach(r=>r.cat=BASE_CAT[r.id]||'plat');
 const recipeCat=r=>r.cat||((r.tags||[]).some(t=>/petit/i.test(t))?'petitdej':(r.tags||[]).some(t=>/collation|snack/i.test(t))?'collation':'plat');
@@ -542,7 +543,12 @@ async function syncSupa(){ if(MODE!=='supa'||SYNC_BUSY) return; SYNC_BUSY=true; 
     setSync('ok');
   }catch(e){ failed=true; if(e.code==='no_session'){ MODE='local'; setSync('nosync'); render(); toast('Session expirée : reconnecte-toi dans Compte.'); } else setSync(e.code==='offline'?'offline':'err'); }
   finally{ SYNC_BUSY=false; if(DIRTY&&!failed&&MODE==='supa'){ clearTimeout(PUSH_T); PUSH_T=setTimeout(syncSupa,1500); } } }
-function startSupa(){ MODE='supa'; PHOTOS=null; DUO=null; setSync('wait'); syncSupa().then(()=>{ publishShare(); loadDuo(); });
+function claimDevice(){ const x=SB.sess(), uid=x&&x.uid; if(!uid) return; const own=LS.get('elan_owner');
+  if(own&&own!==uid){ // un autre compte se connecte : on repart de zéro (ses données viennent du serveur), sans mélanger avec celles du compte précédent
+    idb('snapClear').catch(()=>{}); idb('clear').catch(()=>{}); LS.set('elan_snap',''); SNAPS=null;
+    D.s=norm('s',{}); D.r=norm('r',{}); LS.set('elan_s',JSON.stringify(D.s)); LS.set('elan_r',JSON.stringify(D.r)); DIRTY=false; LS.set('elan_dirty',''); LS.set('elan_pulled',''); PHOTOS=null; }
+  LS.set('elan_owner',uid); }
+function startSupa(){ claimDevice(); MODE='supa'; PHOTOS=null; DUO=null; setSync('wait'); syncSupa().then(()=>{ publishShare(); loadDuo(); });
   if(!window._elanLoop){ window._elanLoop=1; setInterval(()=>{ if(document.visibilityState==='visible') syncSupa(); },60000);
     document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') syncSupa(); }); addEventListener('online',()=>syncSupa()); } }
 function handleAuthHash(){ const h=location.hash; if(!/access_token=/.test(h)) return; const q=new URLSearchParams(h.slice(1));
@@ -649,7 +655,7 @@ async function init(){
     try{ [db,user]=await Promise.all([claude.use('db'),claude.use('user')]); uid=user?await user.id():null; }catch(e){}
     claude.use('sample').then(s=>{SAMPLE=s;}).catch(()=>{});
   }
-  if(!db||!uid){ for(const k of ['s','r']){ const l=readLocal(k); if(l) D[k]=norm(k,l);} if(window.claude){ MODE='local'; setSync('local'); } else if(SB.on()&&SB.sess()) startSupa(); else { MODE='local'; setSync(SB.on()?'nosync':'local'); } render(); return; }
+  if(!db||!uid){ for(const k of ['s','r']){ const l=readLocal(k); if(l) D[k]=norm(k,l);} if(D.s.name==='Simon'&&!LS.get('elan_owner')&&!D.s.sessions.length&&!D.s.tests.length){ D.s.name=''; save('s'); } if(window.claude){ MODE='local'; setSync('local'); } else if(SB.on()&&SB.sess()) startSupa(); else { MODE='local'; setSync(SB.on()?'nosync':'local'); } render(); return; }
   MODE='db'; setSync('wait');
   const timer=setTimeout(()=>{ if(!(SY.s.fresh&&SY.r.fresh)) setSync('slow'); },10000);
   for(const k of ['s','r']){
@@ -811,7 +817,7 @@ const ILLU=(()=>{
     return `<svg viewBox="0 0 210 170" class="illu" aria-hidden="true">${s.d(acc)}${man(s.p,ink,shirt)}</svg>`; };
 })();
 const illuFor=id=>ILLU(id,'#121116',TON(id)==='#FFFFFF'?'rgba(255,255,255,.38)':'rgba(18,17,22,.16)',typeof shirtCol==='function'?shirtCol():'#FFFFFF');
-const APP_VER='dromos-v6';
+const APP_VER='dromos-v7';
 let NEW_VER=false, VER_AT=0;
 async function checkVersion(){ if(window.claude||APP_VER==='dev'||Date.now()-VER_AT<10*60000) return; VER_AT=Date.now(); try{ const r=await fetch('version.json',{cache:'no-store'}); const j=await r.json(); if(j&&j.v&&j.v!==APP_VER&&!NEW_VER){ NEW_VER=true; render(); } }catch(e){} }
 function verBanner(){ return NEW_VER?`<div class="verbar glass"><span class="small"><b>Nouvelle version disponible</b></span><button class="btn sm primary" data-act="reloadApp">Mettre à jour</button></div>`:''; }
@@ -1050,7 +1056,7 @@ function weekDots(){ const m=monday(), t=iso(), days=new Set(D.s.sessions.map(x=
   return `<div class="week">${['L','M','M','J','V','S','D'].map((l,i)=>{const d=addDays(m,i); const c=days.has(d)?'on':d===t?'today':(d<t&&d>=first)?'miss':''; return `<div class="${c}"><span></span>${l}</div>`}).join('')}</div>`; }
 function vToday(){
   const s=D.s, nm=s.name?'Salut '+esc(s.name):'Salut';
-  if(!s.level) return header(nm)+`<section class="hero-day"><span class="pill" style="align-self:flex-start">Bienvenue</span><span class="big fit" style="${fitSz('On démarre',5.2,80)}">On démarre</span><p class="hsub">Une séance par jour, qui change chaque jour et monte en intensité avec toi. Ton objectif :</p>${goalPick()}<p class="hsub" style="margin-top:0">Puis : où en es-tu ?</p></section>`+testForm()+syncLine();
+  if(!s.level) return header(nm)+`<section class="hero-day"><span class="pill" style="align-self:flex-start">Bienvenue</span><span class="big fit" style="${fitSz('On démarre',5.2,80)}">On démarre</span><p class="hsub">Une séance par jour, qui change chaque jour et monte en intensité avec toi.</p>${s.name?'':`<label class="f onb">Ton prénom<input type="text" id="set_name" maxlength="30" autocomplete="given-name" placeholder="Ton prénom"></label>`}<p class="hsub" style="margin-top:0">Ton objectif :</p>${goalPick()}<p class="hsub" style="margin-top:0">Puis : où en es-tu ?</p></section>`+testForm()+syncLine();
   const tb=dailyTabata(), today=iso(), doneToday=s.sessions.filter(x=>x.d===today), streak=dayStreak(), nx=nextProgram();
   const ws=weekSessions(), wk=ws.reduce((a,x)=>a+sKcal(x),0), wdays=new Set(ws.map(x=>x.d)).size, din=D.r.plan[today+'|s'];
   const left=Math.max(1,Math.ceil(6-(s.tierPts||0))), pct=tb.tier>=10?100:Math.round((s.tierPts||0)/6*100);
@@ -1069,6 +1075,7 @@ function vToday(){
   const wch=wkChallenge(); if(wch) todo.push(wkItem(wch));
   const duoLine=duoTodo(); if(duoLine) todo.push(duoLine);
   if(!doneToday.length&&new Date().getHours()>=18) todo.push(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">3’</span><span class="tx"><b>Pas d’énergie ?</b><span>3 minutes suffisent pour garder ta série</span></span><button class="btn sm" data-act="startMin3">3 min</button></li>`);
+  if(!D.s.name) todo.push(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">${svg('user',16)}</span><span class="tx"><b>Comment tu t’appelles ?</b><span>Pour que Dromos te salue par ton prénom</span></span><button class="btn sm" data-act="acctProfil">Ajouter</button></li>`);
   if(!D.s.goalSet) todo.push(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">★</span><span class="tx"><b>Choisis ton objectif</b><span>Perdre du poids, te muscler, ou les deux : ta semaine s’adapte</span></span><button class="btn sm primary" data-act="goalSheet">Choisir</button></li>`);
   if(testDue()&&!TESTFORM) todo.push(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">?</span><span class="tx"><b>Où en es-tu ?</b><span>3 mini-tests pour ajuster ton programme</span></span><button class="btn sm primary" data-act="openTest">Faire</button></li>`);
   CHALL.forEach(c=>{ const st=chState(c); if(!st||st.day>30) return; todo.push(`<li><span class="ic" style="background:#FFF0D6;color:#8A5A00">${chTarget(c,st.day)}</span><span class="tx"><b>Défi ${c.n.toLowerCase()} · jour ${st.day}</b><span>${chTarget(c,st.day)} ${c.unit} aujourd’hui</span></span><button class="btn sm ${st.doneToday?'':'primary'}" data-act="doCh" data-id="${c.id}">${st.doneToday?'✓':'Valider'}</button></li>`); });
@@ -1810,6 +1817,7 @@ const ACT={
   installInfo(){ openSheet(installSheet()); },
   installHide(){ LS.set('elan_noinst','1'); closeSheet(); render(); toast('C’est noté. Le tuto reste dans Compte.'); },
   async installPwa(){ const e=INSTALL_EVT; if(!e) return; INSTALL_EVT=null; try{ e.prompt(); await e.userChoice; }catch(x){} closeSheet(); render(); },
+  acctProfil(){ ACCT_NEXT='profil'; if(VIEW==='compte'){ ACCT_TAB='profil'; render(); } else location.hash='compte'; window.scrollTo(0,0); },
   acctTab(b){ ACCT_TAB=b.dataset.id||''; render(); window.scrollTo(0,0); },
   startPosture(){ startPlayer(postureSession(),{k:'posture'}); },
   setPostureRem(b){ D.s.postureRem=+b.dataset.n; POSTURE_T0=Date.now(); save('s'); render(); },
@@ -1829,7 +1837,7 @@ const ACT={
       else m.textContent='Compte créé. Ouvre le lien reçu par e-mail pour le confirmer, puis reviens te connecter ici.'; }catch(err){ m.textContent=authErr(err); } },
   async recover(){ const m=$('#au_msg'), e=$('#au_email').value.trim(); if(!e){ m.textContent='Entre ton e-mail d’abord.'; return; }
     try{ await SB.recover(e); m.textContent='E-mail envoyé : ouvre le lien pour choisir un nouveau mot de passe.'; }catch(err){ m.textContent=authErr(err); } },
-  async logout(){ await SB.logout(); MODE='local'; PHOTOS=null; setSync('nosync'); render(); toast('Déconnecté. Tes données restent sur cet appareil.'); },
+  async logout(){ await SB.logout(); MODE='local'; PHOTOS=null; setSync('nosync'); render(); toast('Déconnecté. Tes données restent sur cet appareil jusqu’à la prochaine connexion.'); },
   syncNow(){ DIRTY=true; VER++; syncSupa().then(()=>render()); },
   async setPw(){ const pw=$('#np').value; if(pw.length<6){ toast('6 caractères minimum.'); return; } try{ await SB.req('/auth/v1/user',{method:'PUT',body:{password:pw}}); closeSheet(); toast('Mot de passe changé.'); }catch(e){ toast(authErr(e)); } },
   addMeasure(){ const o={d:iso()}; let any=false; MEAS.forEach(([k])=>{ const v=num('m_'+k); if(v!=null&&v>5&&v<300){ o[k]=Math.round(v*10)/10; any=true; } });
@@ -1908,7 +1916,7 @@ document.addEventListener('change',e=>{ const el=e.target, k=el.dataset.chg;
   if(el.id==='why'){ D.s.why=el.value.slice(0,140); save('s'); return; }
   if(el.id==='remind_t'){ D.s.remind=el.value||'18:30'; save('s'); if(D.s.pushOn&&MODE==='supa') pushSub().then(sub=>sub&&savePushRow(sub)).catch(()=>{}); return; }
   if(el.id==='ph_in'){ addPhoto(el.files&&el.files[0]); el.value=''; return; }
-  if(el.id==='set_name'){ D.s.name=el.value.trim().slice(0,30); save('s'); return; }
+  if(el.id==='set_name'){ D.s.name=el.value.trim().slice(0,30); save('s'); const h=document.querySelector('.head h1'); if(h&&VIEW==='today') { h.textContent=D.s.name?'Salut '+D.s.name:'Salut'; h.style.fontSize=''; h.setAttribute('style',fitSz(h.textContent,2.5,100)); try{ fitTitles(); }catch(e){} } const av=document.querySelector('.lvl .av'); if(av&&D.s.name) av.textContent=D.s.name.charAt(0).toUpperCase(); return; }
   if(k==='plan'){ if(el.value){ const prev=D.r.plan[el.dataset.key]; D.r.plan[el.dataset.key]={r:el.value,p:prev?.p??1}; } else delete D.r.plan[el.dataset.key]; prunePlan(); save('r'); render(); }
   if(k==='portions'){ const e2=D.r.plan[el.dataset.key]; if(e2){ const v=parseInt(el.value); e2.p=clamp(isNaN(v)?1:v,0,12); save('r'); } }
   if(k==='check'){ if(el.checked) D.r.checked[el.dataset.key]=true; else delete D.r.checked[el.dataset.key]; save('r'); render(); }
