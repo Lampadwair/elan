@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-B0WvSu/nJxd2jJ7/gJiVrFdHM6DBpnK9/x33q9buIYc='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-zWalmfSrfLWLKhnF83zKAa4H2zG3CuzBKSVI4hZb3Rc='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qhbrypojnamuhclaneem.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
@@ -9,8 +9,8 @@
 <meta name="theme-color" content="#E9ECF1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0B0D12" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=dromos2">
+<link rel="icon" type="image/png" href="icon-192.png?v=dromos2">
 <title>Dromos</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -90,6 +90,13 @@ p{margin:0}
 .prof .pt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px} .prof .pt b{font-size:1.25rem} .prof .pt span{font-size:.85rem;color:var(--muted)} .prof .pt .why{color:var(--ink);font-style:italic;margin-top:4px}
 .chev{color:var(--muted);font-size:1.4rem;line-height:1;flex:none}
 .card.menu{padding:4px 0;gap:0}
+.instc{flex-direction:row;align-items:center;gap:14px;padding:14px 18px;text-align:left;font:inherit;color:var(--ink);cursor:pointer;width:100%}
+.instc .mi{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-weight:800;flex:none} .instc .mt{flex:1;min-width:0;display:flex;flex-direction:column} .instc small{color:var(--muted);font-size:.8rem}
+.steps{list-style:none;counter-reset:st;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.steps li{counter-increment:st;display:grid;grid-template-columns:30px 1fr;column-gap:12px;row-gap:2px}
+.steps li::before{content:counter(st);grid-row:span 2;width:30px;height:30px;border-radius:50%;background:var(--day);color:var(--on-day);display:grid;place-items:center;font-weight:800;font-size:.9rem}
+.sheet .hlink{background:none;border:0;padding:4px 0;color:var(--sub);font:inherit;font-size:.85rem;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.steps b{font-size:.95rem} .steps span{font-size:.85rem;color:var(--muted);line-height:1.4}
 .menu button{display:flex;align-items:center;gap:14px;width:100%;padding:13px 18px;border:0;background:none;font:inherit;color:var(--ink);text-align:left;cursor:pointer;border-bottom:1px solid var(--track)}
 .menu button:last-child{border-bottom:0}
 .menu .mi{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;color:#fff;flex:none}
@@ -804,7 +811,7 @@ const ILLU=(()=>{
     return `<svg viewBox="0 0 210 170" class="illu" aria-hidden="true">${s.d(acc)}${man(s.p,ink,shirt)}</svg>`; };
 })();
 const illuFor=id=>ILLU(id,'#121116',TON(id)==='#FFFFFF'?'rgba(255,255,255,.38)':'rgba(18,17,22,.16)',typeof shirtCol==='function'?shirtCol():'#FFFFFF');
-const APP_VER='dromos-v5';
+const APP_VER='dromos-v6';
 let NEW_VER=false, VER_AT=0;
 async function checkVersion(){ if(window.claude||APP_VER==='dev'||Date.now()-VER_AT<10*60000) return; VER_AT=Date.now(); try{ const r=await fetch('version.json',{cache:'no-store'}); const j=await r.json(); if(j&&j.v&&j.v!==APP_VER&&!NEW_VER){ NEW_VER=true; render(); } }catch(e){} }
 function verBanner(){ return NEW_VER?`<div class="verbar glass"><span class="small"><b>Nouvelle version disponible</b></span><button class="btn sm primary" data-act="reloadApp">Mettre à jour</button></div>`:''; }
@@ -876,6 +883,28 @@ function postureCard(){ const v=+D.s.postureRem||0, notif=!window.claude&&'Notif
     <p class="xs muted" style="margin-top:8px">Cette semaine : ${postureWeek()} pause${postureWeek()>1?'s':''}.</p></section>`; }
 function swapTargets(){ const t=dow(), m=monday(), wp=weekPlan(); if(D.s.sessions.some(x=>x.d===iso()&&x.k==='T')) return [];
   const out=[]; for(let j=t+1;j<7;j++){ if(isOff(addDays(m,j))||wp[j].id===wp[t].id&&wp[j].f===wp[t].f) continue; out.push(j); } return out; }
+/* Installation de la webapp (écran d'accueil) */
+const IS_IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const IS_APP=()=>{ try{ return !!navigator.standalone||matchMedia('(display-mode: standalone)').matches; }catch(e){ return false; } };
+let INSTALL_EVT=null; window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); INSTALL_EVT=e; });
+const APP_URL='https://lampadwair.github.io/elan/';
+function installSheet(){ const ic=(d)=>`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px">${d}</svg>`;
+  const share=ic('<path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/>'), plus=ic('<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/>');
+  const inApp=!!window.claude;
+  return `<div class="between"><h2 class="title-l">Installer Dromos</h2><button class="icon-btn glass" data-act="closeSheet" aria-label="Fermer">${svg('x',16)}</button></div>
+  <p class="sub">Sur l’écran d’accueil, Dromos s’ouvre en plein écran comme une vraie appli, marche hors connexion et peut t’envoyer les rappels (sur iPhone, les notifications ne marchent que comme ça).</p>
+  <span class="h-sec" style="margin-top:4px">Sur iPhone</span>
+  <ol class="steps">
+    <li><b>Ouvre Dromos dans Safari</b><span>${inApp?`Recopie cette adresse dans Safari : <b>lampadwair.github.io/elan</b>`:'À l’adresse lampadwair.github.io/elan, dans Safari (pas dans une autre appli).'}</span></li>
+    <li><b>Touche « ••• » puis ${share} Partager</b><span>Le bouton « ••• » est à droite de la barre d’adresse. Sur un iPhone plus ancien (iOS 18 ou avant), touche directement ${share} en bas de l’écran.</span></li>
+    <li><b>Choisis ${plus} « Sur l’écran d’accueil »</b><span>Fais défiler la liste vers le bas si tu ne le vois pas.</span></li>
+    <li><b>Garde l’option « app web » activée, puis touche Ajouter</b><span>L’icône Dromos (le coureur) apparaît sur ton écran d’accueil. Tu as encore l’ancienne icône (le H d’Hermes) ? Supprime-la d’abord : appui long sur l’icône, puis « Supprimer », et refais ces étapes.</span></li>
+    <li><b>Ouvre Dromos depuis l’icône et connecte-toi</b><span>Compte → Compte et synchro : tu retrouves ta progression. Ensuite, active le rappel dans Compte → Rappels.</span></li>
+  </ol>
+  <span class="h-sec">Sur PC</span>
+  <p class="small sub">Dans Chrome ou Edge, clique sur l’icône d’installation à droite de la barre d’adresse${INSTALL_EVT?', ou directement ici :':'.'}</p>
+  ${INSTALL_EVT?`<div><button class="btn sm primary" data-act="installPwa">Installer sur ce PC</button></div>`:''}
+  ${IS_IOS&&!IS_APP()?`<button class="hlink" style="align-self:flex-start" data-act="installHide">Ne plus afficher sur l’accueil</button>`:''}`; }
 function miniSession0(){ const p=dailyTabata0({short:true}); return {...p,k:'mini',title:'Version courte · '+p.title}; }
 function tierText(t){ const [w,r]=tierWork(t); return `${tierBlocks(t)} bloc${tierBlocks(t)>1?'s':''} de ${tierRounds(t)} rounds ${w}/${r} s, exercices ${['faciles','intermédiaires','avancés'][tierDiff(t)-1]}`; }
 function tierUnlock(t){ if(t>=10) return 'Intensité maximale atteinte : le défi, c’est de la garder.';
@@ -1044,6 +1073,7 @@ function vToday(){
   if(testDue()&&!TESTFORM) todo.push(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">?</span><span class="tx"><b>Où en es-tu ?</b><span>3 mini-tests pour ajuster ton programme</span></span><button class="btn sm primary" data-act="openTest">Faire</button></li>`);
   CHALL.forEach(c=>{ const st=chState(c); if(!st||st.day>30) return; todo.push(`<li><span class="ic" style="background:#FFF0D6;color:#8A5A00">${chTarget(c,st.day)}</span><span class="tx"><b>Défi ${c.n.toLowerCase()} · jour ${st.day}</b><span>${chTarget(c,st.day)} ${c.unit} aujourd’hui</span></span><button class="btn sm ${st.doneToday?'':'primary'}" data-act="doCh" data-id="${c.id}">${st.doneToday?'✓':'Valider'}</button></li>`); });
   { const wd=new Date().getDay(), h=new Date().getHours(), pn=postureToday(); if((wd>0&&wd<6&&h>=9&&h<19)||pn) todo.push(`<li><span class="ic" style="background:#DFF5EC;color:#0B7A57">${pn||'3’'}</span><span class="tx"><b>Pause posture${pn?' · '+pn+' aujourd’hui':''}</b><span>3 min au bureau : dos droit, épaules ouvertes</span></span><button class="btn sm" data-act="startPosture">3 min</button></li>`); }
+  if(IS_IOS&&!IS_APP()&&!window.claude&&LS.get('elan_noinst')!=='1') todo.unshift(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">＋</span><span class="tx"><b>Installe Dromos sur ton iPhone</b><span>Plein écran, icône sur l’accueil et rappels</span></span><button class="btn sm primary" data-act="installInfo">Voir</button></li>`);
   const forceWeek=ws.filter(x=>isForce(x.k)).length;
   if(todayTheme().walk) todo.push(`<li><span class="ic" style="background:color-mix(in srgb,var(--day) 18%,transparent);color:var(--ink)">${svg('play',16)}</span><span class="tx"><b>Marche active · 30 min</b><span>Dehors à bon rythme : ça compte pour ton objectif</span></span></li>`);
   if(false) todo.push(`<li><span class="ic" style="background:#1C1B22;color:#fff">${svg('dumb',18)}</span><span class="tx"><b>Force · séance ${nx.k}</b><span>${esc(nx.plan.title)} · ${estMin(nx.plan)} min · ${forceWeek}/2 cette semaine</span></span><button class="btn sm" data-act="startNext">Lancer</button></li>`);
@@ -1260,6 +1290,7 @@ function vCompte(){ const s=D.s;
   const lv=lvlInfo(totalXp()), st=dayStreak(), ini=esc((s.name||'?').trim().charAt(0).toUpperCase()||'?');
   return header('Compte',' ')+`
   <button class="card glass prof" data-act="acctTab" data-id="profil"><span class="pav">${ini}</span><span class="pt"><b>${esc(s.name||'Ton prénom')}</b><span>Niveau ${lv.L} · ${lv.rank}${st?' · série de '+st+' jour'+(st>1?'s':''):''}</span><span>Objectif : ${GOALS[goal()].n}</span>${s.why?`<span class="why">« ${esc(s.why)} »</span>`:''}</span><span class="chev">›</span></button>
+  ${IS_APP()?'':`<button class="card glass instc" data-act="installInfo"><span class="mi" style="background:var(--day);color:var(--on-day)">＋</span><span class="mt"><b>Installer Dromos</b><small>${IS_IOS?'Sur ton écran d’accueil, en 1 minute':'Sur ton iPhone ou ton PC, en 1 minute'}</small></span><span class="chev">›</span></button>`}
   <nav class="card glass menu" aria-label="Réglages">${ACCT_SECS.filter(x=>!(window.claude&&x[0]==='apparence')).slice(1).map(([id,n,c,ic,sub])=>`<button data-act="acctTab" data-id="${id}"><span class="mi" style="background:${c}">${svg(ic,18)}</span><span class="mt"><b>${n}</b><small>${sub()}</small></span><span class="chev">›</span></button>`).join('')}</nav>`+syncLine();
 }
 function forceCard(){ const hist={}; D.s.sessions.forEach(x=>{ if(x.reps) for(const e in x.reps){ (hist[e]=hist[e]||[]).push({d:x.d,v:x.reps[e]}); } });
@@ -1776,6 +1807,9 @@ const ACT={
     D.s.swaps={[m]:p}; save('s'); closeSheet(); render(); toast(`${wp[j].n} aujourd’hui. ${wp[t].n} passe à ${JOURS[j].toLowerCase()}.`); },
   swapReset(){ D.s.swaps={}; save('s'); closeSheet(); render(); toast('Semaine remise comme prévu.'); },
   goCompte(){ if(VIEW==='compte'){ if(ACCT_TAB){ ACCT_TAB=''; render(); window.scrollTo(0,0); } } else location.hash='compte'; },
+  installInfo(){ openSheet(installSheet()); },
+  installHide(){ LS.set('elan_noinst','1'); closeSheet(); render(); toast('C’est noté. Le tuto reste dans Compte.'); },
+  async installPwa(){ const e=INSTALL_EVT; if(!e) return; INSTALL_EVT=null; try{ e.prompt(); await e.userChoice; }catch(x){} closeSheet(); render(); },
   acctTab(b){ ACCT_TAB=b.dataset.id||''; render(); window.scrollTo(0,0); },
   startPosture(){ startPlayer(postureSession(),{k:'posture'}); },
   setPostureRem(b){ D.s.postureRem=+b.dataset.n; POSTURE_T0=Date.now(); save('s'); render(); },
